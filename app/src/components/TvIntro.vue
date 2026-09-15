@@ -160,11 +160,11 @@ const ledColor = computed(() => (phase.value === 'off' ? 'rgba(244,244,240,.14)'
                   animation: sp-marquee-hum 5s infinite;
                 "
               >
-                SE CAMT<br />
-                SHOWPRO 2026
+                SE'S 18th<br />
+                SHOWPRO
               </div>
               <div style="font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: #00e5ff">
-                30 capstone projects · one arcade hall
+                38 senior projects
               </div>
               <button
                 class="press-start"
@@ -185,7 +185,7 @@ const ledColor = computed(() => (phase.value === 'off' ? 'rgba(244,244,240,.14)'
                 "
                 @click="enterHall"
               >
-                PRESS START
+                CLICK TO START
               </button>
             </div>
 
