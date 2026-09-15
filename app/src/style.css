@@ -1,0 +1,88 @@
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #0a0e17;
+  color: #f4f4f0;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: #00e5ff;
+}
+a:hover {
+  color: #ffd23f;
+}
+
+button {
+  font-family: inherit;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+@keyframes sp-static {
+  0% {
+    background-position: 0 0, 0 0;
+    opacity: 0.95;
+  }
+  20% {
+    background-position: 13px -22px, -8px 11px;
+    opacity: 0.7;
+  }
+  40% {
+    background-position: -19px 14px, 22px -6px;
+    opacity: 1;
+  }
+  60% {
+    background-position: 7px 25px, -14px -19px;
+    opacity: 0.6;
+  }
+  80% {
+    background-position: -23px -9px, 9px 21px;
+    opacity: 0.9;
+  }
+  100% {
+    background-position: 0 0, 0 0;
+    opacity: 0.8;
+  }
+}
+
+@keyframes sp-prompt {
+  0%,
+  100% {
+    opacity: 0.22;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes sp-marquee-hum {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  97% {
+    opacity: 0.82;
+  }
+}
+
+@keyframes sp-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
