@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"><style>
+body{margin:0;background:#0a0e17;font-family:'Space Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#00e5ff}a:hover{color:#ffd23f}
+@keyframes sp-static{0%{background-position:0 0,0 0;opacity:.95}20%{background-position:13px -22px,-8px 11px;opacity:.7}40%{background-position:-19px 14px,22px -6px;opacity:1}60%{background-position:7px 25px,-14px -19px;opacity:.6}80%{background-position:-23px -9px,9px 21px;opacity:.9}100%{background-position:0 0,0 0;opacity:.8}}
+@keyframes sp-prompt{0%,100%{opacity:.22}50%{opacity:.6}}
+@keyframes sp-marquee-hum{0%,100%{opacity:1}97%{opacity:.82}}
+@keyframes sp-rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+</style></helmet>
+<div style="min-height:100vh;background:#0a0e17;color:#f4f4f0">
+
+<sc-if value="{{ onTv }}" hint-placeholder-val="{{ true }}">
+<div onClick="{{ powerOn }}" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:24px;cursor:pointer;background:radial-gradient(60% 60% at 50% 45%,#11172a 0%,#0a0e17 70%)">
+
+  <div style="width:min(660px,92vw,86vh);background:linear-gradient(#1f2742,#151b2e);border-radius:30px;padding:26px 26px 22px;box-shadow:0 40px 90px rgba(0,0,0,.7),inset 0 2px 0 rgba(244,244,240,.09)">
+    <div style="display:flex;gap:22px;align-items:stretch">
+      <div style="flex:1;min-width:0;background:#05070c;border-radius:22px;padding:14px;box-shadow:inset 0 0 0 2px rgba(0,0,0,.6)">
+        <div style="position:relative;aspect-ratio:4/3;border-radius:16px;overflow:hidden;background:#04060a;box-shadow:inset 0 0 60px rgba(0,0,0,.9)">
+
+          <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;background:#fff;box-shadow:0 0 30px 10px rgba(255,255,255,.55);transition:width .16s ease,height .16s ease,opacity .16s ease;width:{{ dotSize }};height:{{ dotSize }};opacity:{{ dotOpacity }}"></div>
+
+          <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);height:3px;background:#fff;box-shadow:0 0 24px 6px rgba(255,255,255,.6);transition:width .22s ease,opacity .2s ease;width:{{ lineWidth }};opacity:{{ lineOpacity }}"></div>
+
+          <div style="position:absolute;inset:0;transition:opacity .18s linear;opacity:{{ staticOpacity }}">
+            <div style="position:absolute;inset:0;animation:sp-static .28s steps(3) infinite;background-image:repeating-conic-gradient(from 0deg,rgba(244,244,240,.55) 0deg 2deg,rgba(10,14,23,.9) 2deg 4deg),repeating-linear-gradient(115deg,rgba(255,255,255,.35) 0 2px,rgba(0,0,0,.5) 2px 5px);background-size:140px 140px,90px 90px"></div>
+          </div>
+
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:24px;text-align:center;transition:opacity .5s ease;opacity:{{ titleOpacity }}">
+            <div style="font-family:'Press Start 2P',monospace;font-size:clamp(13px,2.5vw,22px);line-height:1.7;color:#ffd23f;text-shadow:0 0 14px rgba(255,210,63,.75),0 0 40px rgba(255,46,108,.35);animation:sp-marquee-hum 5s infinite">SE CAMT<br>SHOWPRO 2026</div>
+            <div style="font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#00e5ff">30 capstone projects · one arcade hall</div>
+            <button onClick="{{ enterHall }}" style="margin-top:6px;font-family:'Press Start 2P',monospace;font-size:12px;padding:14px 22px;color:#0a0e17;background:#ff2e6c;border:0;border-radius:4px;cursor:pointer;box-shadow:0 0 24px rgba(255,46,108,.6);transition:box-shadow .2s ease,transform .2s ease" style-hover="box-shadow:0 0 42px rgba(255,46,108,.95);transform:translateY(-2px)">PRESS START</button>
+          </div>
+
+          <div style="position:absolute;inset:0;pointer-events:none;background-image:repeating-linear-gradient(rgba(0,0,0,.34) 0 1px,rgba(0,0,0,0) 1px 3px)"></div>
+          <div style="position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 90px 30px rgba(0,0,0,.85);border-radius:16px"></div>
+        </div>
+      </div>
+
+      <div style="width:76px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:10px 0">
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div style="width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#39456b,#10162a);box-shadow:inset 0 2px 4px rgba(244,244,240,.14),0 6px 14px rgba(0,0,0,.6)"></div>
+          <div style="width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#39456b,#10162a);box-shadow:inset 0 2px 4px rgba(244,244,240,.14),0 6px 14px rgba(0,0,0,.6)"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:center">
+          <div style="width:8px;height:8px;border-radius:50%;background:{{ ledColor }};box-shadow:0 0 12px {{ ledColor }}"></div>
+          <div style="width:36px;height:3px;border-radius:2px;background:rgba(244,244,240,.12)"></div>
+          <div style="width:36px;height:3px;border-radius:2px;background:rgba(244,244,240,.12)"></div>
+          <div style="width:36px;height:3px;border-radius:2px;background:rgba(244,244,240,.12)"></div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:18px;height:10px;border-radius:0 0 18px 18px;background:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,0))"></div>
+  </div>
+
+  <div style="height:22px;display:flex;align-items:center">
+    <div style="transition:opacity .3s ease;opacity:{{ promptOpacity }}">
+      <div style="font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:#f4f4f0;animation:sp-prompt 2.2s ease-in-out infinite">tap to power on</div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ onHall }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:100vh;padding:34px clamp(20px,4vw,56px) 80px;background:radial-gradient(90% 60% at 50% -10%,#141b2e 0%,#0a0e17 60%)">
+
+  <header style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end;justify-content:space-between;max-width:1440px;margin:0 auto 26px">
+    <div>
+      <div style="font-family:'Press Start 2P',monospace;font-size:clamp(14px,2vw,20px);color:#ffd23f;text-shadow:0 0 16px rgba(255,210,63,.6)">ARCADE HALL</div>
+      <div style="margin-top:12px;font-size:14px;color:rgba(244,244,240,.62);max-width:48ch">Thirty senior capstone projects from SE CAMT. Pick a cabinet, insert a coin, meet the team.</div>
+    </div>
+    <button onClick="{{ backToTv }}" style="font-family:'Press Start 2P',monospace;font-size:9px;padding:11px 14px;color:#00e5ff;background:transparent;border:1px solid rgba(0,229,255,.45);border-radius:4px;cursor:pointer;transition:background .2s ease,box-shadow .2s ease" style-hover="background:rgba(0,229,255,.1);box-shadow:0 0 22px rgba(0,229,255,.3)">&lt; TV INTRO</button>
+  </header>
+
+  <nav style="max-width:1440px;margin:0 auto 34px;display:flex;flex-wrap:wrap;gap:12px;padding-bottom:22px;border-bottom:1px solid rgba(244,244,240,.08)">
+    <sc-for list="{{ zones }}" as="z" hint-placeholder-count="5">
+      <button onClick="{{ z.select }}" style="font-family:'Press Start 2P',monospace;font-size:9px;line-height:1.4;padding:12px 16px;border-radius:4px;cursor:pointer;background:{{ z.bg }};color:{{ z.fg }};border:1px solid {{ z.color }};box-shadow:{{ z.shadow }};transition:box-shadow .2s ease,background .2s ease" style-hover="background:rgba(244,244,240,.06)">{{ z.label }}</button>
+    </sc-for>
+  </nav>
+
+  <div style="max-width:1440px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:30px">
+    <sc-for list="{{ visible }}" as="p" hint-placeholder-count="6">
+      <article style="background:linear-gradient(#1a2138,#141a2c);border:1px solid rgba(244,244,240,.08);border-radius:14px 14px 8px 8px;padding:14px;display:flex;flex-direction:column;gap:12px;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease" style-hover="transform:translateY(-5px);border-color:rgba(255,210,63,.35);box-shadow:0 22px 44px rgba(0,0,0,.55)">
+
+        <div style="border-radius:8px;padding:11px 10px;text-align:center;background:linear-gradient(rgba(255,210,63,.16),rgba(255,210,63,.04));border:1px solid rgba(255,210,63,.3)">
+          <div style="font-family:'Press Start 2P',monospace;font-size:10px;line-height:1.7;color:#ffd23f;text-shadow:0 0 12px rgba(255,210,63,.7)">{{ p.name }}</div>
+        </div>
+
+        <div style="position:relative;aspect-ratio:4/3;border-radius:6px;overflow:hidden;background:{{ p.photo }};box-shadow:inset 0 0 0 2px rgba(0,0,0,.5)">
+          <div style="position:absolute;inset:0;display:flex;align-items:flex-end;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:9.5px;letter-spacing:.08em;color:rgba(244,244,240,.62)">{{ p.photoLabel }}</div>
+          <div style="position:absolute;inset:0;pointer-events:none;background-image:repeating-linear-gradient(rgba(0,0,0,.3) 0 1px,rgba(0,0,0,0) 1px 3px);opacity:{{ scanOpacity }}"></div>
+          <div style="position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 44px 14px rgba(5,7,12,.8)"></div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="width:6px;height:6px;border-radius:50%;background:{{ p.zoneColor }};box-shadow:0 0 10px {{ p.zoneColor }}"></span>
+          <span style="font-family:'Press Start 2P',monospace;font-size:7.5px;color:{{ p.zoneColor }}">{{ p.zoneLabel }}</span>
+        </div>
+
+        <p style="margin:0;font-size:14.5px;line-height:1.5;color:#f4f4f0;text-wrap:pretty">{{ p.tagline }}</p>
+
+        <div style="font-size:12px;line-height:1.7;color:rgba(244,244,240,.5)">
+          <div>{{ p.teamLine }}</div>
+          <div>{{ p.advisorLine }}</div>
+        </div>
+
+        <button onClick="{{ p.open }}" style="margin-top:auto;font-family:'Press Start 2P',monospace;font-size:9px;padding:13px 12px;width:100%;color:#0a0e17;background:#00e5ff;border:0;border-radius:4px;cursor:pointer;transition:box-shadow .2s ease,background .2s ease" style-hover="background:#ff2e6c;box-shadow:0 0 26px rgba(255,46,108,.6)">INSERT COIN</button>
+      </article>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ detail }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeDetail }}" style="position:fixed;inset:0;z-index:40;background:rgba(5,7,12,.86);display:flex;align-items:center;justify-content:center;padding:24px">
+  <div onClick="{{ stop }}" style="width:min(720px,100%);max-height:86vh;overflow:auto;background:linear-gradient(#1a2138,#12182a);border:1px solid rgba(244,244,240,.12);border-radius:14px;padding:clamp(22px,3vw,36px);animation:sp-rise .26s ease both">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:18px">
+      <div>
+        <div style="font-family:'Press Start 2P',monospace;font-size:7.5px;color:{{ detail.zoneColor }};margin-bottom:12px">{{ detail.zoneLabel }}</div>
+        <div style="font-family:'Press Start 2P',monospace;font-size:13px;line-height:1.7;color:#ffd23f;text-shadow:0 0 14px rgba(255,210,63,.6)">{{ detail.name }}</div>
+      </div>
+      <button onClick="{{ closeDetail }}" style="font-family:'Press Start 2P',monospace;font-size:10px;padding:9px 11px;color:#f4f4f0;background:transparent;border:1px solid rgba(244,244,240,.2);border-radius:4px;cursor:pointer" style-hover="border-color:#ff2e6c;color:#ff2e6c">X</button>
+    </div>
+
+    <div style="position:relative;margin:24px 0;aspect-ratio:16/9;border-radius:8px;overflow:hidden;background:{{ detail.photo }}">
+      <div style="position:absolute;inset:0;display:flex;align-items:flex-end;padding:14px;font-family:ui-monospace,Menlo,monospace;font-size:10px;color:rgba(244,244,240,.6)">{{ detail.photoLabel }}</div>
+      <div style="position:absolute;inset:0;background-image:repeating-linear-gradient(rgba(0,0,0,.28) 0 1px,rgba(0,0,0,0) 1px 3px)"></div>
+    </div>
+
+    <p style="margin:0 0 24px;font-size:15.5px;line-height:1.65;color:rgba(244,244,240,.85);text-wrap:pretty">{{ detail.description }}</p>
+
+    <div style="display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+      <div>
+        <div style="font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(244,244,240,.45);margin-bottom:12px">Tech stack</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <sc-for list="{{ detail.stack }}" as="t" hint-placeholder-count="4">
+            <span style="font-size:12.5px;padding:6px 10px;border-radius:4px;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.3);color:#00e5ff">{{ t }}</span>
+          </sc-for>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(244,244,240,.45);margin-bottom:12px">Team</div>
+        <div style="font-size:13.5px;line-height:1.8;color:rgba(244,244,240,.75)">
+          <div>{{ detail.teamLine }}</div>
+          <div>{{ detail.advisorLine }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:26px;padding-top:22px;border-top:1px solid rgba(244,244,240,.1);display:flex;flex-wrap:wrap;gap:10px">
+      <sc-for list="{{ detail.links }}" as="l" hint-placeholder-count="2">
+        <a href="{{ l.href }}" style="font-family:'Press Start 2P',monospace;font-size:9px;padding:12px 14px;border-radius:4px;text-decoration:none;color:#0a0e17;background:#ffd23f;transition:box-shadow .2s ease" style-hover="box-shadow:0 0 24px rgba(255,210,63,.6)">{{ l.label }}</a>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;startScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;tv&quot;,&quot;hall&quot;],&quot;default&quot;:&quot;tv&quot;,&quot;tsType&quot;:&quot;'tv'|'hall'&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;scanlines&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Prototype&quot;}}">
+const ZONES = [
+  { key: 'ALL', label: 'ALL ZONES', color: '#f4f4f0' },
+  { key: 'AI', label: 'AI ZONE', color: '#ff2e6c' },
+  { key: 'WEB', label: 'WEB ZONE', color: '#00e5ff' },
+  { key: 'MOBILE', label: 'MOBILE ZONE', color: '#ffd23f' },
+  { key: 'IOT', label: 'IOT ZONE', color: 'oklch(0.82 0.16 155)' }
+];
+
+function stripes(a, b) {
+  return 'repeating-linear-gradient(135deg,' + a + ' 0 10px,' + b + ' 10px 20px)';
+}
+
+const PROJECTS = [
+  { name: 'NEON HARVEST', zone: 'AI', tagline: 'Crop disease detection from a phone camera, trained on 40,000 field photos.',
+    team: ['Nattapong S.', 'Chanya P.'], advisor: 'Dr. Warit K.',
+    description: 'A lightweight vision model that runs offline on mid-range Android phones, letting farmers photograph a leaf and get a disease classification plus a treatment note in under two seconds. Field-tested with growers across three provinces.',
+    stack: ['PyTorch', 'TensorFlow Lite', 'FastAPI', 'Flutter'] },
+  { name: 'QUEUE RUNNER', zone: 'WEB', tagline: 'Live campus service queues in one browser tab, no app install required.',
+    team: ['Pimchanok T.', 'Aran W.'], advisor: 'Asst. Prof. Mint L.',
+    description: 'A realtime queue dashboard for campus offices. Students see wait estimates from live throughput data, staff get a one-screen console, and the whole thing runs on a single small server with websocket fan-out.',
+    stack: ['SvelteKit', 'Postgres', 'Redis', 'Docker'] },
+  { name: 'POCKET CLINIC', zone: 'MOBILE', tagline: 'Medication reminders built for elderly patients and their caregivers.',
+    team: ['Siriwan B.', 'Kittipat R.'], advisor: 'Dr. Napat J.',
+    description: 'A two-sided mobile app: a very large-type reminder screen for patients, and a caregiver view that shows adherence history and escalates a missed dose after a configurable delay. Designed with a geriatric ward over four months.',
+    stack: ['React Native', 'Expo', 'Supabase', 'Figma'] },
+  { name: 'GRID GHOST', zone: 'IOT', tagline: 'Plug-level power monitoring that finds the one appliance wasting your bill.',
+    team: ['Thanakorn A.', 'Ploy M.'], advisor: 'Dr. Warit K.',
+    description: 'ESP32 sensor nodes sample current at each outlet and a disaggregation service attributes consumption to individual appliances. The dashboard ranks devices by wasted baseline draw and estimates monthly cost.',
+    stack: ['ESP32', 'MQTT', 'InfluxDB', 'Grafana'] },
+  { name: 'LORE ENGINE', zone: 'AI', tagline: 'Turns lecture recordings into searchable, cited study notes.',
+    team: ['Jirayu N.', 'Varis C.'], advisor: 'Asst. Prof. Mint L.',
+    description: 'Transcribes a lecture, segments it by topic, and generates summaries where every claim links back to the timestamp it came from. Built to keep students anchored to the source rather than trusting a summary blindly.',
+    stack: ['Whisper', 'LangChain', 'Next.js', 'pgvector'] },
+  { name: 'MARKET PIXEL', zone: 'WEB', tagline: 'A storefront builder for street vendors, set up in a single afternoon.',
+    team: ['Kanyarat D.', 'Peerapat H.'], advisor: 'Dr. Napat J.',
+    description: 'Vendors photograph their stall, pick a template, and get a shareable shop page with LINE-based ordering and a printable QR sign. Onboarding was cut to six taps after two rounds of usability testing at a night market.',
+    stack: ['Astro', 'Cloudflare Workers', 'LINE API', 'Stripe'] }
+];
+
+const TINTS = {
+  AI: ['rgba(255,46,108,.28)', 'rgba(10,14,23,.9)'],
+  WEB: ['rgba(0,229,255,.26)', 'rgba(10,14,23,.9)'],
+  MOBILE: ['rgba(255,210,63,.24)', 'rgba(10,14,23,.9)'],
+  IOT: ['rgba(120,230,170,.24)', 'rgba(10,14,23,.9)']
+};
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const start = props.startScreen || 'tv';
+    this.state = { screen: start, phase: start === 'tv' ? 'off' : 'title', zone: 'ALL', detailId: null };
+    this.timers = [];
+  }
+
+  componentWillUnmount() { this.timers.forEach(clearTimeout); }
+
+  seq() {
+    if (this.state.phase !== 'off') return;
+    this.timers.forEach(clearTimeout);
+    const at = (ms, phase) => this.timers.push(setTimeout(() => this.setState({ phase }), ms));
+    this.setState({ phase: 'bloom' });
+    at(230, 'line');
+    at(470, 'static');
+    at(1150, 'title');
+  }
+
+  zoneOf(key) { return ZONES.find(z => z.key === key) || ZONES[0]; }
+
+  renderVals() {
+    const { screen, phase, zone, detailId } = this.state;
+    const scan = this.props.scanlines === false ? 0 : 1;
+
+    const list = PROJECTS.map((p, i) => {
+      const z = this.zoneOf(p.zone);
+      const t = TINTS[p.zone];
+      return Object.assign({}, p, {
+        id: i,
+        zoneColor: z.color,
+        zoneLabel: z.label,
+        photo: stripes(t[0], t[1]),
+        photoLabel: '[ project photo ]',
+        teamLine: p.team.join(' · '),
+        advisorLine: 'Advisor: ' + p.advisor,
+        links: [{ label: 'LIVE DEMO', href: '#' }, { label: 'REPO', href: '#' }],
+        open: () => this.setState({ detailId: i })
+      });
+    });
+
+    const detail = detailId === null ? null : list[detailId];
+
+    return {
+      onTv: screen === 'tv',
+      onHall: screen === 'hall',
+      scanOpacity: scan,
+      dotSize: phase === 'bloom' ? '18px' : phase === 'off' ? '0px' : '4px',
+      dotOpacity: phase === 'bloom' ? 1 : 0,
+      lineWidth: phase === 'line' || phase === 'static' ? '100%' : '0%',
+      lineOpacity: phase === 'line' ? 1 : phase === 'static' ? 0.35 : 0,
+      staticOpacity: phase === 'static' ? 1 : 0,
+      titleOpacity: phase === 'title' ? 1 : 0,
+      promptOpacity: phase === 'off' ? 1 : 0,
+      ledColor: phase === 'off' ? 'rgba(244,244,240,.14)' : '#ff2e6c',
+      powerOn: () => this.seq(),
+      enterHall: (e) => { if (e) e.stopPropagation(); this.setState({ screen: 'hall' }); },
+      backToTv: () => this.setState({ screen: 'tv', phase: 'title' }),
+      zones: ZONES.map(z => ({
+        label: z.label,
+        color: z.color,
+        fg: zone === z.key ? '#0a0e17' : z.color,
+        bg: zone === z.key ? z.color : 'transparent',
+        shadow: zone === z.key ? '0 0 24px ' + z.color : 'none',
+        select: () => this.setState({ zone: z.key })
+      })),
+      visible: zone === 'ALL' ? list : list.filter(p => p.zone === zone),
+      detail,
+      closeDetail: () => this.setState({ detailId: null }),
+      stop: (e) => e.stopPropagation()
+    };
+  }
+}
+</script>
+</body>
+</html>

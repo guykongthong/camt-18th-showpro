@@ -1,0 +1,336 @@
+<title>Arcade Asset Sketches</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+  :root{
+    --bg:#0a0e17;
+    --panel:#141a2c;
+    --panel-2:#1a2138;
+    --line: rgba(244,244,240,.12);
+    --line-strong: rgba(244,244,240,.22);
+    --ink:#f4f4f0;
+    --ink-dim: rgba(244,244,240,.58);
+    --ink-faint: rgba(244,244,240,.36);
+    --yellow:#ffd23f;
+    --cyan:#00e5ff;
+    --pink:#ff2e6c;
+    --green:#7ee8b8;
+  }
+  @supports (color: oklch(0.82 0.16 155)){
+    :root{ --green: oklch(0.82 0.16 155); }
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:
+      radial-gradient(120% 70% at 50% -12%, #131a2c 0%, var(--bg) 55%);
+    color:var(--ink);
+    font-family:'Space Grotesk',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-inline: max(20px, calc((100vw - 1180px)/2));
+    padding-block: 44px 64px;
+  }
+
+  .wrap{max-width:1180px;margin:0 auto}
+
+  .eyebrow{
+    font-family:'Press Start 2P',monospace;
+    font-size:9px;
+    letter-spacing:.14em;
+    color:var(--cyan);
+    text-shadow:0 0 14px rgba(0,229,255,.35);
+  }
+  h1{
+    font-family:'Press Start 2P',monospace;
+    font-size:clamp(18px,3.2vw,30px);
+    line-height:1.6;
+    margin:16px 0 18px;
+    color:var(--yellow);
+    text-shadow:0 0 18px rgba(255,210,63,.45), 0 0 46px rgba(255,46,108,.18);
+    text-wrap:balance;
+  }
+  .intro{
+    max-width:64ch;
+    font-size:15.5px;
+    line-height:1.65;
+    color:var(--ink-dim);
+  }
+  .intro strong{color:var(--ink);font-weight:600}
+
+  .grid{
+    margin-top:40px;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:26px;
+  }
+
+  .card{
+    background:linear-gradient(var(--panel-2),var(--panel));
+    border:1px solid var(--line);
+    border-radius:12px;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .preview{
+    position:relative;
+    aspect-ratio:4/3;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:
+      linear-gradient(rgba(255,255,255,.02), rgba(255,255,255,0)),
+      repeating-linear-gradient(45deg, rgba(244,244,240,.025) 0 10px, transparent 10px 20px),
+      var(--bg);
+    border-bottom:1px solid var(--line);
+    overflow:hidden;
+  }
+  .preview canvas{
+    width:100%;height:100%;
+    image-rendering:pixelated;
+    display:block;
+  }
+  .preview svg{width:100%;height:100%;display:block}
+
+  .icon-row{
+    display:flex;
+    gap:22px;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+  }
+  .pixel-grid{
+    width:64px;height:64px;
+    display:grid;
+  }
+  .pixel-grid > div{ }
+
+  .coin-spin{
+    width:72px;height:72px;
+    animation: coin-flip 2.4s cubic-bezier(.4,0,.2,1) infinite;
+  }
+  @keyframes coin-flip{
+    0%,100%{transform:scaleX(1) rotate(0deg)}
+    45%{transform:scaleX(.15) rotate(6deg)}
+    55%{transform:scaleX(.15) rotate(-6deg)}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .coin-spin{animation:none}
+  }
+
+  .meta{
+    padding:16px 18px 20px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .meta .name{
+    font-size:15px;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .meta .spec{
+    font:11.5px/1.6 ui-monospace,Menlo,monospace;
+    letter-spacing:.02em;
+    color:var(--accent, var(--cyan));
+    text-transform:uppercase;
+  }
+  .meta .note{
+    font-size:13px;
+    line-height:1.55;
+    color:var(--ink-dim);
+  }
+
+  .card[data-accent="cyan"]   .spec{--accent:var(--cyan)}
+  .card[data-accent="pink"]   .spec{--accent:var(--pink)}
+  .card[data-accent="yellow"] .spec{--accent:var(--yellow)}
+  .card[data-accent="green"]  .spec{--accent:var(--green)}
+
+  .footer-note{
+    margin-top:44px;
+    padding-top:22px;
+    border-top:1px solid var(--line);
+    font-size:13px;
+    line-height:1.7;
+    color:var(--ink-faint);
+    max-width:70ch;
+  }
+  .footer-note b{color:var(--ink-dim);font-weight:600}
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">SE CAMT SHOWPRO — VISUAL ASSETS</div>
+  <h1>ASSET DRAFT SHEET</h1>
+  <p class="intro">
+    Five pieces the CSS-only prototype is currently faking with gradients and box-shadows.
+    Each tile below is a rough, working sketch of the <strong>direction</strong> — shape,
+    palette, scale — not final art. Use them as a starting point for real illustration
+    or texture work before drop-in.
+  </p>
+
+  <div class="grid">
+
+    <div class="card" data-accent="cyan">
+      <div class="preview">
+        <canvas id="staticCanvas" width="48" height="36"></canvas>
+      </div>
+      <div class="meta">
+        <div class="name">CRT Static Noise</div>
+        <div class="spec">Loop · 48×36px source · pixelated scale</div>
+        <div class="note">Fills the TV screen during the "static" phase of the power-on
+          sequence, and sits behind each cabinet's screen bezel at low opacity.
+          Export as a 1–2s looping WebM/APNG, or keep it live like this canvas draft.</div>
+      </div>
+    </div>
+
+    <div class="card" data-accent="pink">
+      <div class="preview">
+        <svg viewBox="0 0 120 120" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <pattern id="carpet" width="34" height="34" patternUnits="userSpaceOnUse">
+              <rect width="34" height="34" fill="#141a2c"/>
+              <polygon points="0,34 17,0 34,34" fill="none" stroke="#00e5ff" stroke-width="2" opacity=".55"/>
+              <polygon points="0,0 17,34 34,0" fill="none" stroke="#ff2e6c" stroke-width="2" opacity=".42"/>
+              <circle cx="17" cy="17" r="1.6" fill="#ffd23f" opacity=".8"/>
+            </pattern>
+          </defs>
+          <rect width="120" height="120" fill="url(#carpet)"/>
+        </svg>
+      </div>
+      <div class="meta">
+        <div class="name">Arcade Carpet</div>
+        <div class="spec">Seamless tile · SVG or 240×240 PNG</div>
+        <div class="note">Replaces the flat radial-gradient hall background with the
+          jagged geometric carpet every real arcade shares. Tiles edge-to-edge behind
+          the project grid.</div>
+      </div>
+    </div>
+
+    <div class="card" data-accent="yellow">
+      <div class="preview">
+        <svg viewBox="0 0 200 280">
+          <rect x="20" y="20" width="160" height="240" rx="14" fill="none" stroke="#f4f4f0" stroke-width="3" opacity=".85"/>
+          <rect x="34" y="34" width="132" height="36" rx="6" fill="rgba(255,210,63,.10)" stroke="#ffd23f" stroke-width="2"/>
+          <rect x="40" y="86" width="120" height="100" rx="8" fill="rgba(0,229,255,.07)" stroke="#00e5ff" stroke-width="2.5"/>
+          <rect x="52" y="98" width="96" height="76" fill="#1a2138"/>
+          <rect x="30" y="198" width="140" height="24" rx="6" fill="#141a2c" stroke="#f4f4f0" stroke-width="1.5" opacity=".7"/>
+          <line x1="70" y1="210" x2="70" y2="192" stroke="#ff2e6c" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="70" cy="210" r="7" fill="#ff2e6c"/>
+          <circle cx="112" cy="210" r="6" fill="#00e5ff"/>
+          <circle cx="132" cy="210" r="6" fill="#ffd23f"/>
+          <circle cx="152" cy="210" r="6" fill="#ff2e6c"/>
+          <rect x="20" y="222" width="160" height="38" rx="10" fill="none" stroke="#f4f4f0" stroke-width="3" opacity=".85"/>
+        </svg>
+      </div>
+      <div class="meta">
+        <div class="name">Cabinet Chassis</div>
+        <div class="spec">Front view · SVG · ~5:7 aspect</div>
+        <div class="note">A fully illustrated cabinet body — marquee, screen bezel,
+          joystick, buttons, kick plate — to replace <code>ArcadeCabinet</code>'s
+          current gradient-and-shadow box.</div>
+      </div>
+    </div>
+
+    <div class="card" data-accent="green">
+      <div class="preview">
+        <div class="icon-row">
+          <div class="pixel-grid" id="iconAI"></div>
+          <div class="pixel-grid" id="iconWEB"></div>
+          <div class="pixel-grid" id="iconMOBILE"></div>
+          <div class="pixel-grid" id="iconIOT"></div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="name">Zone Badges</div>
+        <div class="spec">4× 8×8px sprites · one per zone accent</div>
+        <div class="note">AI · WEB · MOBILE · IOT — small pixel-art glyphs to replace
+          the plain colored dot next to each project's zone label and in the zone nav.</div>
+      </div>
+    </div>
+
+    <div class="card" data-accent="yellow">
+      <div class="preview">
+        <div class="pixel-grid coin-spin" id="iconCOIN"></div>
+      </div>
+      <div class="meta">
+        <div class="name">Insert-Coin Token</div>
+        <div class="spec">8×8px sprite · optional 3-frame flip sheet</div>
+        <div class="note">Sits on the INSERT COIN button and drives a short token-drop
+          animation on click, before the cabinet screen zooms into the project detail.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="footer-note">
+    <b>None of this is final art</b> — it's scaffolding so the direction is obvious
+    before anyone spends time in Illustrator/Aseprite. The carpet and cabinet are built
+    from plain rects/polygons here; the zone badges and coin are literal pixel bitmaps
+    (an array of 1s and 0s), which is the easiest format to hand off to redraw at a
+    larger resolution.
+  </p>
+</div>
+
+<script>
+  // CRT static
+  (function(){
+    var c = document.getElementById('staticCanvas');
+    var ctx = c.getContext('2d');
+    var w = c.width, h = c.height;
+    var img = ctx.createImageData(w, h);
+    function draw(){
+      var d = img.data;
+      for (var i = 0; i < d.length; i += 4) {
+        var v = Math.random() * 255 | 0;
+        d[i] = d[i+1] = d[i+2] = v;
+        d[i+3] = 255;
+      }
+      ctx.putImageData(img, 0, 0);
+    }
+    draw();
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduce) setInterval(draw, 90);
+  })();
+
+  // Pixel bitmaps (8x8, '1' = filled)
+  var BITMAPS = {
+    iconAI: { color: 'var(--pink)', rows: [
+      '11....11','11....11','..1111..','.111111.',
+      '.111111.','..1111..','11....11','11....11'
+    ]},
+    iconWEB: { color: 'var(--cyan)', rows: [
+      '11111111','11111111','10000001','10000001',
+      '10111101','10000001','10000001','11111111'
+    ]},
+    iconMOBILE: { color: 'var(--yellow)', rows: [
+      '..1111..','.1....1.','1......1','1......1',
+      '1......1','1......1','.1....1.','..1111..'
+    ]},
+    iconIOT: { color: 'var(--green)', rows: [
+      '...11...','..1111..','.111111.','........',
+      '..1111..','...11...','...11...','..1111..'
+    ]},
+    iconCOIN: { color: 'var(--yellow)', rows: [
+      '..1111..','.111111.','11.11.11','11.11.11',
+      '11.11.11','11.11.11','.111111.','..1111..'
+    ]}
+  };
+
+  Object.keys(BITMAPS).forEach(function(id){
+    var el = document.getElementById(id);
+    if (!el) return;
+    var spec = BITMAPS[id];
+    var rows = spec.rows;
+    el.style.gridTemplateColumns = 'repeat(' + rows[0].length + ',1fr)';
+    el.style.gridTemplateRows = 'repeat(' + rows.length + ',1fr)';
+    rows.forEach(function(row){
+      row.split('').forEach(function(ch){
+        var cell = document.createElement('div');
+        if (ch === '1') cell.style.background = spec.color;
+        el.appendChild(cell);
+      });
+    });
+  });
+</script>
