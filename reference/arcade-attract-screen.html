@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SE'S 18TH SHOWPRO — Arcade Attract Screen</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+  :root{
+    --bg:#0a0e17;
+    --panel:#141a2c;
+    --panel-2:#1a2138;
+    --line: rgba(244,244,240,.12);
+    --line-strong: rgba(244,244,240,.22);
+    --ink:#f4f4f0;
+    --ink-dim: rgba(244,244,240,.58);
+    --ink-faint: rgba(244,244,240,.36);
+    --yellow:#ffd23f;
+    --cyan:#00e5ff;
+    --pink:#ff2e6c;
+    --green:#7ee8b8;
+    --red:#ff3b3b;
+  }
+  @supports (color: oklch(0.82 0.16 155)){
+    :root{ --green: oklch(0.82 0.16 155); }
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Space Grotesk',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow:hidden;
+  }
+
+  /* ===== stage: centers the fixed 1920x1080 design and scales it to fit the viewport ===== */
+  .stage{
+    width:100vw;
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:
+      radial-gradient(circle, rgba(0,0,0,.06) 1.5px, transparent 1.5px) 0 0/22px 22px,
+      #eef0f2;
+  }
+
+  /* ===== the physical monitor housing: chunky off-white plastic, not a dark bezel ===== */
+  .tv-frame{
+    position:relative;
+    width:1920px;
+    height:1080px;
+    flex-shrink:0;
+    transform-origin:center center;
+    padding:56px;
+    border-radius:54px;
+    background:linear-gradient(160deg, #f4f4f2 0%, #dcdcda 45%, #c7c7c5 100%);
+    box-shadow:
+      0 50px 120px rgba(20,20,25,.28),
+      inset 0 2px 0 rgba(255,255,255,.85),
+      inset 0 -10px 26px rgba(0,0,0,.12);
+  }
+  /* plastic grain, so the housing doesn't read as flat CSS */
+  .tv-frame::before{
+    content:'';
+    position:absolute; inset:0;
+    border-radius:inherit;
+    opacity:.5;
+    mix-blend-mode:multiply;
+    pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+  }
+
+  /* ===== the curved CRT glass ===== */
+  .crt-screen{
+    position:relative;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    /* pronounced elliptical corners = the classic barrel-curve trick, turned way up */
+    border-radius:9% / 15%;
+    background:radial-gradient(80% 70% at 50% 38%, #101524 0%, #05070c 78%);
+    box-shadow:
+      inset 0 0 0 3px rgba(0,0,0,.9),
+      inset 0 0 40px 14px rgba(0,0,0,.9),
+      inset 0 0 160px 60px rgba(0,0,0,.85);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  /* heavy bow to every straight edge, echoing real tube curvature */
+  .crt-screen{
+    -webkit-mask-image: radial-gradient(135% 115% at 50% 50%, #000 68%, rgba(0,0,0,.9) 84%, rgba(0,0,0,.55) 100%);
+            mask-image: radial-gradient(135% 115% at 50% 50%, #000 68%, rgba(0,0,0,.9) 84%, rgba(0,0,0,.55) 100%);
+  }
+
+  /* faint pixel-grid dots, echoes the CSS-CRT gist's phosphor texture */
+  .crt-screen::before{
+    content:'';
+    position:absolute; inset:0;
+    background-image: radial-gradient(rgba(244,244,240,.05) 1px, transparent 1px);
+    background-size: 26px 26px;
+    pointer-events:none;
+  }
+
+  /* scanlines + vignette + glass highlight, straight out of the CRT-effect gist */
+  .crt-screen::after{
+    content:'';
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(105deg, rgba(244,244,240,.09) 0%, transparent 22%),
+      repeating-linear-gradient(rgba(0,0,0,.4) 0 1px, rgba(0,0,0,0) 1px 3px),
+      radial-gradient(120% 90% at 50% 50%, transparent 48%, rgba(0,0,0,.78) 100%);
+    mix-blend-mode:multiply;
+    pointer-events:none;
+    animation:sp-hum 6s ease-in-out infinite;
+  }
+
+  /* photographic grain sitting on top of the tube, matching the reference's gritty look */
+  .grain{
+    position:absolute; inset:0;
+    z-index:2;
+    pointer-events:none;
+    opacity:.22;
+    mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation:sp-grain 1s steps(2) infinite;
+  }
+
+  .content{ position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; width:100%; height:100%; }
+
+  .pf{font-family:'Press Start 2P',monospace}
+
+  .hi-score{
+    margin-top:52px;
+    letter-spacing:.32em;
+    color:var(--yellow);
+    font-size:22px;
+    opacity:.85;
+    text-shadow:0 0 10px rgba(255,210,63,.35);
+    animation:sp-prompt 2.6s ease-in-out infinite;
+  }
+
+  .title{
+    position:relative;
+    margin-top:40px;
+    font-size:76px;
+    line-height:1;
+    letter-spacing:.04em;
+    text-align:center;
+    background:linear-gradient(180deg,#ffd23f 0%,#ff8a3d 45%,var(--red) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    filter:drop-shadow(0 0 18px rgba(255,59,59,.55)) drop-shadow(0 0 46px rgba(255,138,61,.35));
+    animation:sp-flicker 4.5s ease-in-out infinite;
+  }
+  /* chromatic-aberration streak trailing off the title, like a long-exposure CRT photo */
+  .title::before,
+  .title::after{
+    content:'SE\'S 18TH SHOWPRO';
+    position:absolute; inset:0;
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:blur(2px);
+    pointer-events:none;
+  }
+  .title::before{
+    background:linear-gradient(180deg, rgba(255,46,108,.55), rgba(255,46,108,0));
+    transform:translateX(6px);
+  }
+  .title::after{
+    background:linear-gradient(180deg, rgba(0,229,255,.5), rgba(0,229,255,0));
+    transform:translateX(-6px);
+  }
+
+  .tagline{
+    margin-top:20px;
+    display:flex;
+    align-items:center;
+    gap:18px;
+    font-size:19px;
+    letter-spacing:.08em;
+    color:var(--yellow);
+    text-shadow:0 0 10px rgba(255,210,63,.4);
+  }
+  .tagline .bar{
+    width:52px;
+    height:5px;
+    background:linear-gradient(90deg, var(--red), #ff8a3d);
+    box-shadow:0 0 10px rgba(255,59,59,.55);
+    flex-shrink:0;
+  }
+
+  .subtitle{
+    margin-top:12px;
+    font-size:13px;
+    letter-spacing:.28em;
+    color:var(--ink-faint);
+  }
+
+  .directory{
+    margin-top:40px;
+    width:680px;
+    max-width:calc(100% - 120px);
+    background:linear-gradient(var(--panel-2), var(--panel));
+    border:1px solid var(--line-strong);
+    border-radius:6px;
+    box-shadow:0 30px 70px rgba(0,0,0,.6);
+    overflow:hidden;
+  }
+
+  .directory-head{
+    font-size:15px;
+    letter-spacing:.24em;
+    text-align:center;
+    padding:14px 10px;
+    color:var(--ink);
+    background:
+      repeating-linear-gradient(rgba(255,255,255,.06) 0 1px, transparent 1px 3px),
+      linear-gradient(180deg, var(--red), #b91c1c);
+    text-shadow:0 2px 4px rgba(0,0,0,.4);
+  }
+
+  .directory-cols{
+    display:flex;
+    justify-content:space-between;
+    padding:16px 30px 6px;
+    font-size:10.5px;
+    letter-spacing:.18em;
+    color:var(--ink-faint);
+  }
+
+  .zone-rows{ padding:0 10px 12px; }
+
+  .zone-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin:0 10px 10px;
+    padding:13px 16px;
+    background:rgba(244,244,240,.02);
+    border-bottom:1px dotted var(--line);
+    border-right:3px solid var(--zone-color, var(--line));
+    min-width:0;
+  }
+  .zone-row .name{
+    font-size:14px;
+    font-weight:700;
+    letter-spacing:.02em;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .zone-row .count{
+    font-size:16px;
+    font-weight:700;
+    flex-shrink:0;
+    color:var(--zone-color, var(--ink));
+    text-shadow:0 0 10px color-mix(in srgb, var(--zone-color, var(--ink)) 60%, transparent);
+  }
+
+  .press-start{
+    margin-top:44px;
+    padding-bottom:8px;
+    border-bottom:2px solid var(--yellow);
+    font-size:22px;
+    letter-spacing:.1em;
+    color:var(--yellow);
+    text-shadow:0 0 16px rgba(255,210,63,.6);
+    animation:sp-prompt 1.6s ease-in-out infinite;
+  }
+
+  .cabinet-id{
+    margin-top:auto;
+    margin-bottom:36px;
+    font-size:13px;
+    letter-spacing:.14em;
+    color:var(--ink-faint);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  @keyframes sp-prompt{ 0%,100%{opacity:.45} 50%{opacity:1} }
+  @keyframes sp-flicker{ 0%,100%{opacity:1} 4%{opacity:.86} 6%{opacity:1} 46%{opacity:1} 48%{opacity:.9} 50%{opacity:1} }
+  @keyframes sp-hum{ 0%,100%{opacity:1} 50%{opacity:.94} }
+  @keyframes sp-grain{ 0%{transform:translate(0,0)} 50%{transform:translate(-1.5%,1%)} 100%{transform:translate(1%,-1.5%)} }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="tv-frame" id="tvFrame">
+    <div class="crt-screen">
+      <div class="grain"></div>
+      <div class="content">
+        <div class="hi-score pf">HIGH SCORE 999900</div>
+
+        <div class="title pf">SE'S 18TH SHOWPRO</div>
+
+        <div class="tagline pf">
+          <span class="bar"></span>
+          = 38 SENIOR PROJECTS, COME SEE OUR WORK! =
+          <span class="bar"></span>
+        </div>
+        <div class="subtitle">COLLEGE OF ARTS, MEDIA AND TECHNOLOGY, CHIANG MAI UNIVERSITY</div>
+
+        <div class="directory">
+          <div class="directory-head pf">— ZONE DIRECTORY —</div>
+          <div class="directory-cols pf">
+            <span>ZONE</span>
+            <span>PROJECTS</span>
+          </div>
+          <div class="zone-rows">
+            <div class="zone-row" style="--zone-color:var(--yellow)">
+              <span class="name">AI &amp; DATA ZONE</span>
+              <span class="count pf">30</span>
+            </div>
+            <div class="zone-row" style="--zone-color:var(--red)">
+              <span class="name">SOFTWARE &amp; CLOUD</span>
+              <span class="count pf">15</span>
+            </div>
+            <div class="zone-row" style="--zone-color:var(--cyan)">
+              <span class="name">GAME &amp; MEDIA</span>
+              <span class="count pf">18</span>
+            </div>
+            <div class="zone-row" style="--zone-color:var(--yellow)">
+              <span class="name">IOT &amp; EMBEDDED</span>
+              <span class="count pf">24</span>
+            </div>
+            <div class="zone-row" style="--zone-color:var(--red)">
+              <span class="name">CYBER &amp; NETWORKS</span>
+              <span class="count pf">12</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="press-start pf">PRESS START TO EXPLORE PROJECTS</div>
+
+        <div class="cabinet-id">🎮 CABINET ID #2026-SE</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Scale the fixed 1920x1080 design to fit whatever viewport it's opened in,
+  // instead of letting the canvas resize and clip its (fixed-px) contents.
+  const frame = document.getElementById('tvFrame');
+  function fit(){
+    const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080, 1) * 0.96;
+    frame.style.transform = 'scale(' + s + ')';
+  }
+  window.addEventListener('resize', fit);
+  fit();
+</script>
+
+</body>
+</html>
