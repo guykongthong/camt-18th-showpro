@@ -51,3 +51,22 @@ has not yet been written up as a formal spec doc — next step is
 `docs/superpowers/specs/YYYY-MM-DD-showpro-arcade-design.md`, then the
 `writing-plans` skill for the implementation plan. **No app code has been written
 yet** — only the reference prototype and asset sketches above.
+
+## Project assets
+Project data lives in `src/data/projects.js` (`PROJECTS`, `CATEGORIES`). Every media field
+starts as `null` and the UI falls back to a placeholder, so nothing breaks while assets are missing.
+
+Folder convention, one folder per project slug:
+`public/projects/<slug>/logo.webp`, `poster.webp`, `demo.mp4`, `shots/d-01.webp` (desktop),
+`shots/m-01.webp` (mobile), `m1.webp`, `m2.webp` (member photos).
+
+To add an asset, drop the file in and set its path in the project entry (`media.logo`,
+`media.poster`, `media.video`, `media.shots.desktop[]`, `media.shots.mobile[]`,
+`members[i].photo`). Which array a screenshot goes in decides whether it is shown in a browser
+frame or a phone frame, and array order is carousel order. `driveLinks` only records where the
+originals are and is never rendered.
+
+Suggested sizes: logo 256px square, poster 900x1200, screenshots webp under 300KB,
+video H.264 mp4 under about 25MB (or host it elsewhere).
+
+Note: the older sections of this file describe a Pinia/GSAP plan that is not what the app uses now.

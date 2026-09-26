@@ -1,17 +1,20 @@
 <script setup>
 import { ref } from "vue";
-import { TRACKS } from "../data/projects.js";
+import { PROJECTS, CATEGORIES } from "../data/projects.js";
 import IconChevron from "../components/IconChevron.vue";
 
 const tabHover = ref(false);
-const BOOTH_COUNT = 38;
+const BOOTH_COUNT = PROJECTS.length;
+const counts = CATEGORIES.map((c) => ({
+  ...c,
+  count: PROJECTS.filter((p) => p.categories.includes(c.label)).length,
+}));
 </script>
 
 <template>
   <div class="page-shell">
     <div class="page-flash"></div>
     <div class="glow-top"></div>
-    <div class="glow-left"></div>
     <div class="glow-bottom"></div>
     <div class="page-scanlines"></div>
 
@@ -20,7 +23,6 @@ const BOOTH_COUNT = 38;
         <div class="crumbs">SE'S 18TH SHOWPRO &nbsp;/&nbsp; CAMT BUILDING &nbsp;/&nbsp; 30 SEP 2026</div>
         <div class="stats">
           <div>BOOTHS <span class="accent">{{ String(BOOTH_COUNT).padStart(2, "0") }}</span></div>
-          <div>FLOORS <span class="accent">02</span></div>
         </div>
       </div>
 
@@ -41,7 +43,7 @@ const BOOTH_COUNT = 38;
           </div>
           <div class="fp-foot">
             <div>ENTRANCE &mdash; NORTH SIDE</div>
-            <div>36 BOOTHS &nbsp;&#183;&nbsp; 6 TRACKS</div>
+            <div>{{ BOOTH_COUNT }} PROJECTS &nbsp;&#183;&nbsp; {{ CATEGORIES.length }} CATEGORIES</div>
           </div>
         </div>
 
@@ -49,10 +51,10 @@ const BOOTH_COUNT = 38;
           <div class="panel">
             <div class="panel-title">LEGEND</div>
             <div class="legend-list">
-              <div v-for="l in TRACKS" :key="l.label" class="legend-row">
+              <div v-for="l in counts" :key="l.label" class="legend-row">
                 <div class="swatch" :style="{ background: l.color }"></div>
                 <div class="legend-label">{{ l.label }}</div>
-                <div class="legend-range">{{ l.range }}</div>
+                <div class="legend-range">{{ String(l.count).padStart(2, "0") }}</div>
               </div>
             </div>
           </div>
@@ -69,6 +71,8 @@ const BOOTH_COUNT = 38;
         </div>
       </div>
 
+      <router-link to="/projects" class="m-btn m-primary"><span class="arrow"><IconChevron dir="left" /></span>BROWSE PROJECTS</router-link>
+
       <div class="footer-panel">
         <div class="stripe"></div>
         <div class="body">
@@ -78,24 +82,20 @@ const BOOTH_COUNT = 38;
           </div>
           <div class="col">
             <div class="foot-label">FOLLOW US</div>
-            <a href="#" class="foot-link"><span class="ico">FB</span>facebook.com/placeholder</a>
-            <a href="#" class="foot-link"><span class="ico round">IG</span>@placeholder_handle</a>
+            <a href="https://www.facebook.com/CAMTSEshowpro" target="_blank" rel="noopener" class="foot-link"><img class="social-ico" src="/social/facebook.png" alt="Facebook" />facebook.com/CAMTSEshowpro</a>
+            <a href="https://www.instagram.com/camt.seshowpro/" target="_blank" rel="noopener" class="foot-link"><img class="social-ico" src="/social/instagram.png" alt="Instagram" />@camt.seshowpro</a>
           </div>
           <div class="col">
             <div class="foot-label">EVENT</div>
             <div class="foot-text">30 SEP 2026<br />8:00AM &mdash; 12:30PM<br />CAMT BUILDING</div>
-          </div>
-          <div class="col">
-            <div class="foot-label">CONTACT</div>
-            <div class="foot-text">placeholder@cmu.ac.th<br />+66 00 000 0000</div>
           </div>
         </div>
         <div class="legal">&copy; 2026 SE CAMT &mdash; INSERT&nbsp;COIN&nbsp;TO&nbsp;CONTINUE</div>
       </div>
 
       <div class="bottom-nav">
-        <router-link to="/"><span class="arrow"><IconChevron dir="left" /></span>TITLE SCREEN</router-link>
-        <router-link to="/projects">PROJECT SELECT</router-link>
+        <router-link to="/" class="m-btn m-secondary"><span class="arrow"><IconChevron dir="left" /></span>TITLE SCREEN</router-link>
+        <router-link to="/projects" class="m-btn m-secondary">PROJECT SELECT</router-link>
       </div>
     </div>
 
@@ -121,15 +121,6 @@ const BOOTH_COUNT = 38;
   height: 240px;
   pointer-events: none;
   background: linear-gradient(180deg, rgba(255, 120, 0, 0.2), transparent 78%);
-}
-.glow-left {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 58%;
-  height: 440px;
-  pointer-events: none;
-  background: radial-gradient(70% 100% at 0% 0%, rgba(63, 143, 208, 0.3), rgba(63, 143, 208, 0.08) 45%, transparent 72%);
 }
 .glow-bottom {
   position: absolute;
@@ -314,19 +305,10 @@ const BOOTH_COUNT = 38;
   font-size: 8.5px;
   color: #f5e2c4;
 }
-.ico {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.social-ico {
   width: 24px;
   height: 24px;
-  border: 2px solid #ff9500;
-  background: #1a1006;
-  font-size: 8px;
-  color: #ff9500;
-}
-.ico.round {
-  border-radius: 7px;
+  border-radius: 6px;
 }
 
 .bottom-nav {
@@ -385,5 +367,18 @@ const BOOTH_COUNT = 38;
 .side-tab.hover .tab-label {
   max-width: 210px;
   opacity: 1;
+}
+@media (max-width: 720px) {
+  .side-tab {
+    display: none;
+  }
+  .bottom-nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-top: 14px;
+    /* keeps the last button clear of the fixed sound and help buttons */
+    margin-bottom: 52px;
+  }
 }
 </style>

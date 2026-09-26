@@ -1,13 +1,19 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
-import { buildProjects, TRACKS } from "../data/projects.js";
+import { PROJECTS, CATEGORIES } from "../data/projects.js";
+import { formatDescription } from "../utils/description.js";
 import IconChevron from "../components/IconChevron.vue";
 import IconPlay from "../components/IconPlay.vue";
+import MediaImg from "../components/MediaImg.vue";
+import ShotCarousel from "../components/ShotCarousel.vue";
+import Lightbox from "../components/Lightbox.vue";
+import { playSfx, playSfxLayer, preloadSfx, takeChoose, playAnnouncer, preloadAnnouncer } from "../utils/sfx.js";
+import { duckMusic } from "../utils/music.js";
 
 const router = useRouter();
-const all = buildProjects();
-const trackLabels = TRACKS.map((t) => t.label);
+const fromTitle = takeChoose();
+const all = PROJECTS.map((p, i) => ({ ...p, i }));
 
 const sel = ref(0);
 const locked = ref(null);
@@ -18,10 +24,30 @@ const detailOpen = ref(false);
 const wiping = ref(false);
 const locking = ref(false);
 const mapHover = ref(false);
+const posterOpen = ref(false);
+const howto = ref(false);
+let howtoTimer = null;
+
+function seenHowto() {
+  try {
+    return sessionStorage.getItem("showpro-howto") === "1";
+  } catch (e) {
+    return false;
+  }
+}
+function closeHowto() {
+  howto.value = false;
+  try {
+    sessionStorage.setItem("showpro-howto", "1");
+  } catch (e) {
+    // fine, it just shows again next time
+  }
+}
 const prevHover = ref(false);
 const nextHover = ref(false);
 
 let toastTimer = null;
+let chooseTimer = null;
 let t0 = null;
 let t1 = null;
 let t2 = null;
@@ -35,16 +61,22 @@ function say(msg) {
 function select(i) {
   if (i === sel.value) return;
   sel.value = i;
+  preloadAnnouncer(all[i].slug);
 }
 
 function hoverSlot(i) {
-  if (locked.value === null) select(i);
+  if (locked.value === null) {
+    select(i);
+    playSfx("hover");
+  }
 }
 
 function tap(i) {
   if (locked.value === null) {
     select(i);
     locked.value = i;
+    preloadAnnouncer(all[i].slug);
+    playAnnouncer(all[i].slug);
   } else if (locked.value === i) {
     locked.value = null;
     say("UNLOCKED — HOVER TO BROWSE");
@@ -63,15 +95,18 @@ function launch() {
   clearTimeout(t1);
   clearTimeout(t2);
   locking.value = true;
+  playSfxLayer("launch");
   t0 = setTimeout(() => {
     locking.value = false;
     wiping.value = true;
+    playSfx("ready");
   }, 780);
   t1 = setTimeout(() => (detailOpen.value = true), 780 + 1080);
   t2 = setTimeout(() => (wiping.value = false), 780 + 1700);
 }
 
 function closeDetail() {
+  duckMusic(false);
   document.body.style.overflow = "";
   detailOpen.value = false;
 }
@@ -84,27 +119,44 @@ function nextProject() {
 }
 
 function onEsc(e) {
-  if (e.key === "Escape") closeDetail();
+  if (e.key !== "Escape") return;
+  if (howto.value) closeHowto();
+  else closeDetail();
 }
-onMounted(() => window.addEventListener("keydown", onEsc));
+onMounted(() => {
+  window.addEventListener("keydown", onEsc);
+  preloadSfx();
+  // the entrance flash and fade are done after about 0.7s
+  // played near the end of the slow fade-in
+  if (fromTitle) chooseTimer = setTimeout(() => playSfx("choose"), 1500);
+  // the guide comes up once the page has finished fading in: every time you come in from the
+  // title screen, and on a direct load only if it has not been dismissed in this session yet
+  if (fromTitle || !seenHowto()) howtoTimer = setTimeout(() => (howto.value = true), fromTitle ? 2600 : 800);
+});
 onBeforeUnmount(() => {
   window.removeEventListener("keydown", onEsc);
   clearTimeout(t0);
   clearTimeout(t1);
   clearTimeout(t2);
   clearTimeout(toastTimer);
+  clearTimeout(chooseTimer);
+  clearTimeout(howtoTimer);
+  duckMusic(false);
   document.body.style.overflow = "";
 });
 
 const list = computed(() =>
   all.filter((p) => {
-    const q = query.value.trim().toUpperCase();
-    return (cat.value === "ALL" || p.category === cat.value) && (!q || p.name.includes(q) || p.num.includes(q));
+    const q = query.value.trim().toLowerCase();
+    if (cat.value !== "ALL" && !p.categories.includes(cat.value)) return false;
+    if (!q) return true;
+    const hay = [p.name, p.short, p.num, ...p.members.flatMap((m) => [m.name, m.nick]), ...p.tech];
+    return hay.some((h) => h && h.toLowerCase().includes(q));
   })
 );
 
 const selected = computed(() => all.find((p) => p.i === sel.value) || all[0]);
-const chips = computed(() => ["ALL", ...trackLabels]);
+const chips = ["ALL", ...CATEGORIES.map((c) => c.label)];
 const hint = computed(() =>
   locked.value === null ? "HOVER (OR TAP) A SLOT TO LOCK IN" : "LOCKED — CLICK THE SAME SLOT AGAIN TO UNLOCK"
 );
@@ -122,29 +174,45 @@ function isIgniting(p) {
   return p.i === locked.value && locking.value;
 }
 
-const BOARD_COLS = 5;
-function boardFillers(arr) {
-  if (arr.length === 0) return 0;
-  const rows = Math.ceil(arr.length / BOARD_COLS);
-  return rows * BOARD_COLS - arr.length;
+function team(p) {
+  return p.members.map((m) => m.nick || m.name).join(" & ");
 }
+
+const platformLabel = computed(
+  () => ({ mobile: "MOBILE APP", web: "WEB APP", both: "WEB + MOBILE" })[selected.value.platform]
+);
+
+const shotGroups = computed(() => {
+  const { shots } = selected.value.media;
+  const groups = [];
+  if (shots.desktop.length) groups.push({ type: "desktop", title: "WEB", items: shots.desktop });
+  if (shots.mobile.length) groups.push({ type: "phone", title: "MOBILE", items: shots.mobile });
+  return groups;
+});
+
+const about = computed(() => formatDescription(selected.value.description));
+const metaLine = computed(() => {
+  const p = selected.value;
+  return [p.categories.join(" \u00b7 "), p.booth ? "BOOTH " + p.booth : null, platformLabel.value]
+    .filter(Boolean)
+    .join(" \u00b7 ");
+});
 
 const boardGroups = computed(() => {
   const half = Math.ceil(list.value.length / 2);
   const leftList = list.value.slice(0, half);
   const rightList = list.value.slice(half);
   return [
-    { side: "left", list: leftList, fillers: boardFillers(leftList) },
-    { side: "right", list: rightList, fillers: boardFillers(rightList) },
+    { side: "left", list: leftList },
+    { side: "right", list: rightList },
   ];
 });
 </script>
 
 <template>
-  <div class="page-shell">
+  <div class="page-shell" :class="{ 'from-title': fromTitle }">
     <div class="page-flash"></div>
     <div class="glow-top"></div>
-    <div class="glow-left"></div>
     <div class="glow-bottom"></div>
     <div class="page-scanlines"></div>
 
@@ -170,20 +238,23 @@ const boardGroups = computed(() => {
           </div>
         </transition>
 
-        <div class="preview">
-          <div class="shot" :key="'shot' + selected.i">
-            <div class="shot-label mono">project shot — portrait</div>
+        <div class="preview" :class="{ 'no-poster': !selected.media.poster }">
+          <div v-if="selected.media.poster" class="shot" :key="'shot' + selected.i" @click="posterOpen = true">
+            <MediaImg :src="selected.media.poster" :alt="selected.name + ' poster'" fit="cover">
+              <template #fallback><span></span></template>
+            </MediaImg>
             <div class="shot-num">{{ selected.num }}</div>
           </div>
           <div class="info" :key="'info' + selected.i">
-            <div class="meta">{{ selected.category }} &nbsp;&#183;&nbsp; BOOTH {{ selected.booth }}</div>
-            <div class="arcade-display name">{{ selected.name }}</div>
+            <div class="meta">{{ metaLine }}</div>
+            <div class="arcade-display name" :class="{ 'name-long': selected.name.length > 22 }">{{ selected.name }}</div>
             <div class="pair">
-              <div>TEAM<br /><span class="fg">{{ selected.team }}</span></div>
-              <div>ADVISOR<br /><span class="fg">{{ selected.advisor }}</span></div>
+              <div>TEAM<br /><span class="fg">{{ team(selected) }}</span></div>
+              <div>ADVISOR<br /><span class="fg">{{ selected.advisor.name }}</span></div>
             </div>
             <div class="tags">
-              <div v-for="t in selected.tags" :key="t" class="tag-chip">{{ t }}</div>
+              <div v-for="t in selected.tech.slice(0, 8)" :key="t" class="tag-chip">{{ t }}</div>
+              <div v-if="selected.tech.length > 8" class="tag-chip">+{{ selected.tech.length - 8 }}</div>
             </div>
           </div>
         </div>
@@ -196,6 +267,9 @@ const boardGroups = computed(() => {
           <span class="search-ico"><IconPlay dir="right" /></span>
           <input type="text" v-model="query" placeholder="SEARCH BY NAME" />
         </div>
+        <select v-model="cat" class="cat-select" aria-label="Filter by category" @change="playSfx('start')">
+          <option v-for="c in chips" :key="c" :value="c">{{ c === "ALL" ? "ALL CATEGORIES" : c }}</option>
+        </select>
         <div class="chips">
           <div
             v-for="c in chips"
@@ -223,8 +297,13 @@ const boardGroups = computed(() => {
               @mouseenter="hoverSlot(p.i)"
             >
               <div class="slot-bg"></div>
-              <div class="slot-body">
+              <div class="slot-body" :class="{ nologo: !p.media.logo }">
                 <div class="slot-num">{{ p.num }}</div>
+                <div v-if="p.media.logo" class="slot-logo">
+                  <MediaImg :src="p.media.logo" :alt="p.name + ' logo'" fit="contain">
+                    <template #fallback><span></span></template>
+                  </MediaImg>
+                </div>
                 <div class="slot-short">{{ p.short }}</div>
               </div>
               <div v-if="p.i === locked" class="slot-badge">LOCKED</div>
@@ -233,11 +312,12 @@ const boardGroups = computed(() => {
               </transition>
               <div class="slot-bar"></div>
             </div>
-            <div v-for="n in group.fillers" :key="group.side + '-f-' + n" class="slot slot-filler"></div>
           </div>
           <div v-if="gi === 0" class="board-divider"></div>
         </template>
       </div>
+
+      <router-link to="/map" class="m-btn m-primary">STAGE MAP<span class="arrow"><IconChevron dir="right" /></span></router-link>
 
       <div class="footer-panel">
         <div class="stripe"></div>
@@ -248,25 +328,68 @@ const boardGroups = computed(() => {
           </div>
           <div class="col">
             <div class="foot-label">FOLLOW US</div>
-            <a href="#" class="foot-link"><span class="ico">FB</span>facebook.com/placeholder</a>
-            <a href="#" class="foot-link"><span class="ico round">IG</span>@placeholder_handle</a>
+            <a href="https://www.facebook.com/CAMTSEshowpro" target="_blank" rel="noopener" class="foot-link"><img class="social-ico" src="/social/facebook.png" alt="Facebook" />facebook.com/CAMTSEshowpro</a>
+            <a href="https://www.instagram.com/camt.seshowpro/" target="_blank" rel="noopener" class="foot-link"><img class="social-ico" src="/social/instagram.png" alt="Instagram" />@camt.seshowpro</a>
           </div>
           <div class="col">
             <div class="foot-label">EVENT</div>
             <div class="foot-text">30 SEP 2026<br />8:00AM &mdash; 12:30PM<br />CAMT BUILDING</div>
-          </div>
-          <div class="col">
-            <div class="foot-label">CONTACT</div>
-            <div class="foot-text">placeholder@cmu.ac.th<br />+66 00 000 0000</div>
           </div>
         </div>
         <div class="legal">&copy; 2026 SE CAMT &mdash; INSERT&nbsp;COIN&nbsp;TO&nbsp;CONTINUE</div>
       </div>
 
       <div class="bottom-nav">
-        <router-link to="/"><span class="arrow"><IconChevron dir="left" /></span>TITLE SCREEN</router-link>
+        <router-link to="/" class="m-btn m-secondary"><span class="arrow"><IconChevron dir="left" /></span>TITLE SCREEN</router-link>
       </div>
     </div>
+
+    <button class="help-btn" aria-label="How to use this page" @click="howto = true">?</button>
+
+    <transition name="howto">
+      <div v-if="howto" class="howto" role="dialog" aria-modal="true" aria-label="How to use this page" @click.self="closeHowto">
+        <div class="howto-card">
+          <div class="howto-title arcade-display">HOW TO PLAY</div>
+          <ol class="howto-steps">
+            <li>
+              <span class="num">1</span>
+              <div>
+                <b>PICK A PROJECT</b>
+                <span class="mouse-t">Move your mouse over a tile to preview the project on the big card.</span>
+                <span class="touch-t">Tap a tile to show that project on the big card.</span>
+              </div>
+            </li>
+            <li>
+              <span class="num">2</span>
+              <div>
+                <b>LOCK IT IN</b>
+                <span class="mouse-t">Click a tile to lock it in. To pick a different one, click the locked tile again to unlock.</span>
+                <span class="touch-t">Your tap also locks it in. To pick a different one, tap the locked tile again to unlock.</span>
+              </div>
+            </li>
+            <li>
+              <span class="num">3</span>
+              <div>
+                <b>VIEW THE PROJECT</b>
+                <span>Press VIEW PROJECT to watch the demo, see the screenshots and meet the team.</span>
+              </div>
+            </li>
+            <li>
+              <span class="num">4</span>
+              <div>
+                <b>FIND ONE FAST</b>
+                <span>Use the category buttons or the search box to narrow down the list.</span>
+              </div>
+            </li>
+          </ol>
+          <div class="howto-actions">
+            <div class="btn btn-primary" @click="closeHowto">GOT IT</div>
+          </div>
+        </div>
+      </div>
+    </transition>
+
+    <Lightbox :open="posterOpen" :items="[selected.media.poster]" @close="posterOpen = false" />
 
     <router-link
       to="/map"
@@ -301,54 +424,90 @@ const boardGroups = computed(() => {
       <div v-if="detailOpen" class="detail">
         <div class="detail-inner">
           <div class="detail-top">
-            <div class="crumbs">SLOT {{ selected.num }} &nbsp;&#183;&nbsp; {{ selected.category }} &nbsp;&#183;&nbsp; BOOTH {{ selected.booth }}</div>
+            <div class="crumbs">SLOT {{ selected.num }} &nbsp;&#183;&nbsp; {{ metaLine }}</div>
             <div class="btn btn-primary" @click="closeDetail"><span class="arrow"><IconChevron dir="left" /></span>BACK</div>
           </div>
 
           <div class="arcade-display detail-name">{{ selected.name }}</div>
 
-          <div class="media-grid">
-            <div class="hero mono">demo video / hero shot — 16:9</div>
-            <div class="shot-sm mono">screenshot 01</div>
-            <div class="shot-sm mono">screenshot 02</div>
-            <div class="shot-sm mono">screenshot 03</div>
-            <div class="shot-sm mono">screenshot 04</div>
+          <div v-if="selected.media.video" class="hero">
+            <video
+              :key="selected.slug"
+              :src="selected.media.video"
+              controls
+              playsinline
+              preload="metadata"
+              @play="duckMusic(true)"
+              @pause="duckMusic(false)"
+              @ended="duckMusic(false)"
+            ></video>
+          </div>
+
+          <div v-if="shotGroups.length" class="panel">
+            <div class="panel-title">SCREENSHOTS</div>
+            <div class="shot-groups">
+              <ShotCarousel
+                v-for="g in shotGroups"
+                :key="selected.slug + g.type"
+                :items="g.items"
+                :type="g.type"
+                :title="shotGroups.length > 1 ? g.title : ''"
+              />
+            </div>
           </div>
 
           <div class="detail-cols">
             <div class="panel">
               <div class="panel-title">MEMBERS</div>
               <div class="players">
-                <div v-for="s in selected.students" :key="s.name" class="player">
-                  <div class="avatar mono">student photo</div>
-                  <div class="pname">{{ s.name }}</div>
-                  <div class="prole">{{ s.role }}</div>
+                <div v-for="(m, k) in selected.members" :key="m.name" class="player" :class="'m' + (k + 1)">
+                  <div v-if="m.photo" class="avatar mono">
+                    <MediaImg :src="m.photo" :alt="m.name" position="center top">
+                      <template #fallback><span></span></template>
+                    </MediaImg>
+                  </div>
+                  <div class="prole mrole">MEMBER {{ k + 1 }}</div>
+                  <div class="pname">{{ m.name }}</div>
+                  <div v-if="m.nick" class="prole">"{{ m.nick }}"</div>
                 </div>
               </div>
             </div>
             <div class="panel">
               <div class="panel-title">ADVISOR</div>
-              <div class="players">
-                <div class="player">
-                  <div class="avatar mono">advisor photo</div>
-                  <div class="pname">{{ selected.advisor }}</div>
-                  <div class="prole">DEPT. OF SOFTWARE ENGINEERING</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="panel-title">TECH STACK &amp; TECHNOLOGIES</div>
-            <div class="tags">
-              <div v-for="t in selected.tags" :key="t" class="tag-chip">{{ t }}</div>
+              <div class="pname">{{ selected.advisor.name }}</div>
             </div>
           </div>
 
           <div class="panel">
             <div class="panel-title">ABOUT</div>
-            <div class="about mono">
-              project summary goes here — one short paragraph per team: the problem, the approach, and what a visitor can try at the booth.
+            <div class="about">
+              <template v-for="(b, bi) in about" :key="bi">
+                <p v-if="b.type === 'p'">
+                  <template v-for="(s, si) in b.parts" :key="si"><strong v-if="s.strong">{{ s.text }}</strong><template v-else>{{ s.text }}</template></template>
+                </p>
+                <div v-else class="feats">
+                  <div v-for="(it, ii) in b.items" :key="ii" class="feat">
+                    <strong>{{ it.marker + " " }}</strong>
+                    <template v-for="(s, si) in it.parts" :key="si"><strong v-if="s.strong">{{ s.text }}</strong><template v-else>{{ s.text }}</template></template>
+                  </div>
+                </div>
+              </template>
+            </div>
+            <a
+              v-if="selected.deployment"
+              class="live"
+              :href="selected.deployment.url"
+              target="_blank"
+              rel="noopener"
+            >
+              TRY IT LIVE: {{ selected.deployment.label }} &rarr;
+            </a>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title">TECH STACK &amp; TECHNOLOGIES</div>
+            <div class="tags">
+              <div v-for="t in selected.tech" :key="t" class="tag-chip">{{ t }}</div>
             </div>
           </div>
         </div>
@@ -387,15 +546,6 @@ const boardGroups = computed(() => {
   height: 240px;
   pointer-events: none;
   background: linear-gradient(180deg, rgba(255, 120, 0, 0.2), transparent 78%);
-}
-.glow-left {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 58%;
-  height: 440px;
-  pointer-events: none;
-  background: radial-gradient(70% 100% at 0% 0%, rgba(63, 143, 208, 0.3), rgba(63, 143, 208, 0.08) 45%, transparent 72%);
 }
 .glow-bottom {
   position: absolute;
@@ -491,7 +641,7 @@ const boardGroups = computed(() => {
 .preview {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 460px) minmax(0, 1fr);
   gap: 24px;
   align-items: end;
   min-height: 330px;
@@ -504,10 +654,15 @@ const boardGroups = computed(() => {
     padding: 14px 14px 0;
   }
 }
+.preview.no-poster {
+  grid-template-columns: 1fr;
+}
 .shot {
   position: relative;
+  z-index: 10;
+  cursor: zoom-in;
   aspect-ratio: 3 / 4;
-  max-height: 300px;
+  width: 100%;
   background: repeating-linear-gradient(135deg, #2a1a0a 0 8px, #1c1108 8px 16px);
   border: 2px solid #6a4418;
   display: flex;
@@ -515,12 +670,9 @@ const boardGroups = computed(() => {
   justify-content: center;
   animation: slideL 0.4s cubic-bezier(0.16, 0.9, 0.3, 1) both;
 }
-.shot-label {
-  font-size: 10px;
-  letter-spacing: 1px;
-  color: #b08a5a;
-  background: rgba(0, 0, 0, 0.6);
-  padding: 6px 10px;
+.shot :deep(.media-img) {
+  position: absolute;
+  inset: 0;
 }
 .shot-num {
   position: absolute;
@@ -547,6 +699,11 @@ const boardGroups = computed(() => {
 }
 .name {
   font-size: clamp(34px, 5.2vw, 74px);
+  margin-bottom: 0.16em;
+}
+.name.name-long {
+  font-size: clamp(24px, 3.6vw, 48px);
+  line-height: 1;
 }
 .pair {
   display: grid;
@@ -630,6 +787,42 @@ const boardGroups = computed(() => {
   gap: 8px;
   flex-wrap: wrap;
 }
+.cat-select {
+  display: none;
+  width: 100%;
+  padding: 11px 36px 11px 12px;
+  border: 2px solid #ffc21a;
+  border-radius: 0;
+  background-color: #0d0805;
+  background-image: linear-gradient(45deg, transparent 50%, #ff9500 50%),
+    linear-gradient(135deg, #ff9500 50%, transparent 50%);
+  background-position: calc(100% - 18px) 55%, calc(100% - 12px) 55%;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: #ffc21a;
+  cursor: pointer;
+}
+.cat-select:focus {
+  outline: 0;
+  border-color: #fff3d0;
+}
+.cat-select option {
+  background: #0d0805;
+  color: #f5e2c4;
+}
+@media (max-width: 720px) {
+  .cat-select {
+    display: block;
+  }
+  .chips {
+    display: none;
+  }
+}
 .chip {
   cursor: pointer;
   padding: 8px 11px;
@@ -659,8 +852,9 @@ const boardGroups = computed(() => {
   gap: 20px;
 }
 .board-box {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 8px;
   width: 100%;
   max-width: 460px;
@@ -672,6 +866,9 @@ const boardGroups = computed(() => {
   background: linear-gradient(90deg, transparent, rgba(255, 149, 0, 0.6), transparent);
 }
 @media (min-width: 900px) {
+  .slot {
+    flex: 0 0 84px;
+  }
   .board {
     flex-direction: row;
     align-items: stretch;
@@ -679,10 +876,9 @@ const boardGroups = computed(() => {
     gap: 32px;
   }
   .board-box {
-    grid-template-columns: repeat(5, 84px);
-    width: auto;
+    width: calc(84px * 5 + 8px * 4);
     max-width: none;
-    align-content: start;
+    align-content: flex-start;
   }
   .board-divider {
     width: 2px;
@@ -693,6 +889,7 @@ const boardGroups = computed(() => {
   }
 }
 .slot {
+  flex: 0 0 calc((100% - 24px) / 4);
   cursor: pointer;
   position: relative;
   aspect-ratio: 3 / 4;
@@ -702,12 +899,6 @@ const boardGroups = computed(() => {
 }
 .slot:hover {
   border-color: #ff9500;
-}
-.slot-filler {
-  cursor: default;
-  pointer-events: none;
-  border: 2px dashed #241608;
-  background: transparent;
 }
 .slot-cursor {
   border-color: #ff9500;
@@ -740,6 +931,34 @@ const boardGroups = computed(() => {
 }
 .slot-locked .slot-num {
   color: #ffc21a;
+}
+.slot-logo {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  min-height: 0;
+  margin: 4px 0;
+  padding: 6px;
+  background: #fff;
+  border: 1px solid #2e3c4a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nologo .slot-short {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 9px;
+  padding-bottom: 14px;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 720px) {
+  .nologo .slot-short {
+    font-size: 6.5px;
+  }
 }
 .slot-short {
   font-size: 6.5px;
@@ -810,19 +1029,10 @@ const boardGroups = computed(() => {
   font-size: 8.5px;
   color: #f5e2c4;
 }
-.ico {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.social-ico {
   width: 24px;
   height: 24px;
-  border: 2px solid #ff9500;
-  background: #1a1006;
-  font-size: 8px;
-  color: #ff9500;
-}
-.ico.round {
-  border-radius: 7px;
+  border-radius: 6px;
 }
 
 .bottom-nav {
@@ -882,6 +1092,20 @@ const boardGroups = computed(() => {
 .map-tab.hover .map-label {
   max-width: 140px;
   opacity: 1;
+}
+
+@media (max-width: 720px) {
+  .map-tab {
+    display: none;
+  }
+  .bottom-nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-top: 14px;
+    /* keeps the last button clear of the fixed sound and help buttons */
+    margin-bottom: 52px;
+  }
 }
 
 .toast-layer {
@@ -964,11 +1188,11 @@ const boardGroups = computed(() => {
   z-index: 12;
   background: #060403;
   overflow-y: auto;
-  padding: 26px;
+  padding: 26px clamp(16px, 3vw, 56px);
   box-sizing: border-box;
 }
 .detail-inner {
-  max-width: 1180px;
+  max-width: 1320px;
   margin: 0 auto;
   animation: detailIn 0.34s cubic-bezier(0.16, 0.9, 0.3, 1) both;
   display: flex;
@@ -989,14 +1213,11 @@ const boardGroups = computed(() => {
 }
 .detail-name {
   font-size: clamp(34px, 6vw, 84px);
-}
-.media-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 14px;
+  line-height: 1.05;
+  margin-bottom: 0.22em;
+  align-self: flex-start;
 }
 .hero {
-  grid-column: 1 / -1;
   aspect-ratio: 16 / 9;
   border: 2px solid #6a4418;
   background: repeating-linear-gradient(135deg, #2a1a0a 0 8px, #1c1108 8px 16px);
@@ -1006,15 +1227,15 @@ const boardGroups = computed(() => {
   font-size: 11px;
   color: #b08a5a;
 }
-.shot-sm {
-  aspect-ratio: 16 / 10;
-  border: 2px solid #3a2410;
-  background: repeating-linear-gradient(135deg, #241608 0 6px, #1a1006 6px 12px);
+.hero video {
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+.shot-groups {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  color: #b08a5a;
+  flex-direction: column;
+  gap: 22px;
 }
 .detail-cols {
   display: grid;
@@ -1029,7 +1250,7 @@ const boardGroups = computed(() => {
 }
 .players {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 170px));
   gap: 14px;
 }
 .player {
@@ -1040,13 +1261,21 @@ const boardGroups = computed(() => {
 .avatar {
   aspect-ratio: 1 / 1;
   border: 2px solid #6a4418;
-  background: repeating-linear-gradient(135deg, #2a1a0a 0 6px, #1c1108 6px 12px);
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding-bottom: 6px;
+  overflow: hidden;
   font-size: 9px;
   color: #b08a5a;
+}
+.player.m1 .avatar {
+  border-color: #ff9500;
+}
+.player.m2 .avatar {
+  border-color: #3f8fd0;
+}
+.player.m1 .mrole {
+  color: #ff9500;
+}
+.player.m2 .mrole {
+  color: #3f8fd0;
 }
 .pname {
   font-size: 8px;
@@ -1058,10 +1287,35 @@ const boardGroups = computed(() => {
   color: #8fb6d6;
 }
 .about {
-  font-size: 12px;
-  line-height: 1.7;
+  font-size: 10px;
+  line-height: 1.9;
   color: #c9b493;
   max-width: 76ch;
+}
+.about p {
+  margin: 0 0 12px;
+}
+.about strong {
+  color: #f5e2c4;
+}
+.feat {
+  margin-bottom: 8px;
+}
+.live {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 12px 16px;
+  border: 2px solid #ffc21a;
+  background: linear-gradient(90deg, rgba(255, 115, 0, 0.5), rgba(255, 194, 26, 0.42));
+  font-size: 10px;
+  letter-spacing: 1px;
+  line-height: 1.6;
+  color: #f5e2c4;
+  overflow-wrap: anywhere;
+}
+.live:hover {
+  color: #1c0c04;
+  background: linear-gradient(90deg, rgba(255, 149, 0, 0.9), #ffc21a);
 }
 .detail-tab {
   position: fixed;
@@ -1113,10 +1367,125 @@ const boardGroups = computed(() => {
   opacity: 1;
 }
 @media (max-width: 640px) {
+  .detail {
+    padding: 14px;
+  }
   .detail-tab {
     padding: 12px 8px;
     font-size: 8px;
   }
+}
+
+.help-btn {
+  position: fixed;
+  left: 54px;
+  bottom: 12px;
+  z-index: 15;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ffc21a;
+  background: linear-gradient(180deg, #ff9500, #d43c00);
+  color: #1c0c04;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.85;
+}
+.help-btn:hover {
+  opacity: 1;
+}
+.howto {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(3, 2, 1, 0.82);
+  overflow-y: auto;
+}
+.howto-card {
+  width: min(560px, 100%);
+  margin: auto;
+  padding: 22px 22px 20px;
+  border: 2px solid #ffc21a;
+  background: linear-gradient(180deg, #1a1006, #0d0805);
+  box-shadow: 0 0 0 2px #2a1206, 0 0 46px rgba(255, 150, 0, 0.3);
+}
+.howto-title {
+  font-size: clamp(26px, 6vw, 40px);
+  margin-bottom: 18px;
+}
+.howto-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.howto-steps li {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.howto-steps .num {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #1c0c04;
+  background: #ff9500;
+  border: 2px solid #fff3d0;
+}
+.howto-steps b {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  font-weight: normal;
+  color: #ffc21a;
+}
+.howto-steps div span {
+  display: block;
+  font-size: 9px;
+  line-height: 1.8;
+  color: #c9b493;
+}
+.howto-steps .touch-t {
+  display: block;
+}
+.howto-steps .mouse-t {
+  display: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .howto-steps .touch-t {
+    display: none;
+  }
+  .howto-steps .mouse-t {
+    display: block;
+  }
+}
+.howto-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 22px;
+}
+.howto-enter-active,
+.howto-leave-active {
+  transition: opacity 0.25s ease;
+}
+.howto-enter-from,
+.howto-leave-to {
+  opacity: 0;
 }
 
 .toast-enter-active,

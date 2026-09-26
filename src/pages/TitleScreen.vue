@@ -1,25 +1,57 @@
 <script setup>
-import { ref, onBeforeUnmount } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
 import IconPlay from "../components/IconPlay.vue";
+import { preloadSfx, armChoose, playSfx, playSfxFaded } from "../utils/sfx.js";
+import { playTitle, fadeOutTitle } from "../utils/music.js";
 
 const router = useRouter();
 const started = ref(false);
+const powered = ref(false);
 let timer = null;
+let musicTimer = null;
 
 function start() {
   if (started.value) return;
   started.value = true;
+  clearTimeout(musicTimer);
+  fadeOutTitle();
+  playSfx("start");
+  // starts on the click and fades out as the transition fades, right before the roster loads
+  playSfxFaded("slot", 1800, 1000);
+  preloadSfx();
+  armChoose();
   timer = setTimeout(() => router.push("/projects"), 2820);
 }
 
-onBeforeUnmount(() => clearTimeout(timer));
+// the power button is the first click on the page, so the browser lets the sound play
+function powerOn() {
+  if (powered.value) return;
+  powered.value = true;
+  playSfx("tvon");
+  // the CRT power-on animation runs for 3.4s, the music comes in after it
+  musicTimer = setTimeout(() => {
+    playSfx("welcome");
+    playTitle();
+  }, 3400);
+}
+
+onMounted(() => preloadSfx());
+onBeforeUnmount(() => {
+  clearTimeout(timer);
+  clearTimeout(musicTimer);
+});
 </script>
 
 <template>
   <div class="cabinet-wrap">
     <div class="cabinet">
-      <div class="screen">
+      <div class="screen" :class="{ off: !powered }">
+        <div v-if="!powered" class="power-mobile">
+          <div class="power-hint"><span>PRESS POWER</span><i></i></div>
+          <button class="power big" aria-label="Turn the screen on" @click="powerOn"><span class="power-icon"></span></button>
+        </div>
+        <template v-if="powered">
         <div class="glow-a"></div>
         <div class="glow-b"></div>
         <div class="glow-band"></div>
@@ -82,14 +114,21 @@ onBeforeUnmount(() => clearTimeout(timer));
             <div class="line"></div>
           </div>
         </transition>
+        </template>
       </div>
 
       <div class="bezel-foot">
         <div class="badge">
           <span class="label">SHOWPRO&nbsp;CRT-26</span>
-          <span class="led"></span>
+          <span class="led" :class="{ standby: !powered }"></span>
         </div>
         <div class="knobs">
+          <div class="power-area">
+            <div v-if="!powered" class="power-hint"><span>PRESS POWER</span><i></i></div>
+            <button class="power" :class="{ on: powered }" aria-label="Turn the screen on" :disabled="powered" @click="powerOn">
+              <span class="power-icon"></span>
+            </button>
+          </div>
           <div class="knob"></div>
           <div class="knob"></div>
         </div>
@@ -487,7 +526,160 @@ onBeforeUnmount(() => clearTimeout(timer));
 }
 .knobs {
   display: flex;
+  align-items: center;
   gap: 8px;
+}
+.led.standby {
+  background: #d2381a;
+  box-shadow: 0 0 9px 1px rgba(210, 56, 26, 0.8);
+  animation: standby 1.6s ease-in-out infinite;
+}
+.power-area {
+  position: relative;
+  margin-right: 8px;
+}
+.power {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid #4a4642;
+  background: radial-gradient(circle at 35% 30%, #4a4642, #1d1b1a 70%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ff9500;
+}
+.power:not(.on):not(:disabled) {
+  border-color: #ff9500;
+  animation: powerPulse 1.3s ease-in-out infinite;
+}
+.power:hover:not(:disabled) {
+  background: radial-gradient(circle at 35% 30%, #6a5a48, #2a1e12 70%);
+}
+.power.on {
+  color: #7fdc4a;
+  cursor: default;
+}
+.power-icon {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+}
+.power-icon::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -5px;
+  width: 2px;
+  height: 6px;
+  margin-left: -1px;
+  background: currentColor;
+}
+.power-hint {
+  position: absolute;
+  z-index: 6;
+  right: -6px;
+  bottom: calc(100% + 8px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  pointer-events: none;
+  animation: hintBob 1s ease-in-out infinite;
+}
+.power-hint span {
+  padding: 8px 10px;
+  font-size: 9px;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  color: #1c0c04;
+  background: linear-gradient(180deg, #ffc21a, #ff9500);
+  border: 2px solid #fff3d0;
+  box-shadow: 0 0 14px rgba(255, 150, 0, 0.6);
+}
+.power-hint i {
+  width: 0;
+  height: 0;
+  margin-right: 12px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 10px solid #ffc21a;
+}
+.power-mobile {
+  display: none;
+}
+@media (max-width: 640px) {
+  .power-area .power-hint {
+    display: none;
+  }
+  .power-mobile {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .power-mobile .power-hint {
+    position: static;
+    align-items: center;
+  }
+  .power-mobile .power-hint i {
+    margin-right: 0;
+  }
+  .power.big {
+    width: 64px;
+    height: 64px;
+    border-color: #ff9500;
+    animation: powerPulse 1.3s ease-in-out infinite;
+  }
+  .power.big .power-icon {
+    width: 26px;
+    height: 26px;
+    border-width: 3px;
+    border-top-color: transparent;
+  }
+  .power.big .power-icon::before {
+    top: -13px;
+    width: 3px;
+    height: 14px;
+    margin-left: -1.500px;
+  }
+}
+@keyframes hintBob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+@keyframes powerPulse {
+  0%,
+  100% {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.7), 0 0 0 0 rgba(255, 149, 0, 0.6);
+  }
+  50% {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.7), 0 0 14px 6px rgba(255, 149, 0, 0.55);
+  }
+}
+@keyframes standby {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
 }
 .knob {
   width: 30px;

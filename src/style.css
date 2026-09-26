@@ -8,7 +8,8 @@
 
 body {
   margin: 0;
-  font-family: "Press Start 2P", monospace;
+  font-family: "Press Start 2P", "Noto Sans Thai", monospace;
+  line-height: 1.6;
   background: #0a0705;
   color: #f5e2c4;
 }
@@ -63,6 +64,13 @@ input::placeholder {
   pointer-events: none;
   z-index: 9;
   background: repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.34) 0 1px, transparent 1px 3px);
+}
+
+.page-shell.from-title {
+  animation: pageInSlow 2s ease-out both;
+}
+.page-shell.from-title .page-flash {
+  animation: pageFlashSoft 2s ease-out both;
 }
 
 .page-flash {
@@ -142,6 +150,22 @@ input::placeholder {
   }
   100% {
     opacity: 1;
+  }
+}
+@keyframes pageInSlow {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes pageFlashSoft {
+  0% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0;
   }
 }
 @keyframes pageFlash {
@@ -697,5 +721,47 @@ input::placeholder {
   100% {
     transform: scaleX(0);
     opacity: 0;
+  }
+}
+
+/* the amber outlined secondary button (title screen / project select) on every screen size */
+.m-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-sizing: border-box;
+  padding: 13px 22px;
+  border: 2px solid #ffc21a;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.m-btn.m-secondary {
+  background: #0d0805;
+  color: #ffc21a;
+}
+.m-btn.m-secondary:hover {
+  background: #1a1006;
+  border-color: #fff3d0;
+}
+.m-btn .arrow {
+  display: flex;
+}
+/* the big orange stage map / browse projects button only exists on phones, desktop has the side tabs */
+.m-btn.m-primary {
+  display: none;
+}
+@media (max-width: 720px) {
+  .m-btn {
+    display: flex;
+    width: 100%;
+    padding: 16px 12px;
+  }
+  .m-btn.m-primary {
+    margin-top: 22px;
+    background: linear-gradient(180deg, #ff9500, #d43c00);
+    color: #1c0c04;
   }
 }
