@@ -51,3 +51,25 @@ has not yet been written up as a formal spec doc — next step is
 `docs/superpowers/specs/YYYY-MM-DD-showpro-arcade-design.md`, then the
 `writing-plans` skill for the implementation plan. **No app code has been written
 yet** — only the reference prototype and asset sketches above.
+
+## Project assets
+Project data lives in `src/data/projects.js` (`PROJECTS`, `CATEGORIES`). All 26 real projects are filled in.
+Any media field that is `null` or empty is simply not shown, so a missing asset never breaks a page.
+
+Files live in `public/projects/<slug>/`, flat:
+`logo.webp`, `poster.webp`, `member1.webp`, `member2.webp`, and `shot-01.webp`, `shot-02.webp`, ...
+The data points at these paths (`media.logo`, `media.poster`, `media.shots.desktop[]`,
+`media.shots.mobile[]`, `members[i].photo`). Which array a screenshot goes in decides whether it is
+shown in a browser frame or a phone frame, and array order is carousel order.
+
+Demo videos are not in the repo. They are MP4 files in a public Supabase storage bucket
+(`video-assets`) and `media.video` holds the full URL. The free plan caps each file at 50MB.
+
+Sounds and music live in `public/sfx` and `public/music`. `src/utils/music.js` and `src/utils/sfx.js`
+share one audio registry so nothing plays twice, and every sound respects the mute button.
+
+Suggested sizes: logo 512px square, poster 900x1200, screenshots webp up to 1600px wide.
+
+Note: the older sections above describe an earlier Pinia/GSAP plan, 38 mock projects and `/hall` and
+`/project/:slug` routes. That is not what the app uses now. The real routes are `/`, `/projects` and
+`/map`, there are 26 projects, and there is no Pinia or GSAP.
