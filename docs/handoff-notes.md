@@ -53,20 +53,23 @@ has not yet been written up as a formal spec doc — next step is
 yet** — only the reference prototype and asset sketches above.
 
 ## Project assets
-Project data lives in `src/data/projects.js` (`PROJECTS`, `CATEGORIES`). Every media field
-starts as `null` and the UI falls back to a placeholder, so nothing breaks while assets are missing.
+Project data lives in `src/data/projects.js` (`PROJECTS`, `CATEGORIES`). All 26 real projects are filled in.
+Any media field that is `null` or empty is simply not shown, so a missing asset never breaks a page.
 
-Folder convention, one folder per project slug:
-`public/projects/<slug>/logo.webp`, `poster.webp`, `demo.mp4`, `shots/d-01.webp` (desktop),
-`shots/m-01.webp` (mobile), `m1.webp`, `m2.webp` (member photos).
+Files live in `public/projects/<slug>/`, flat:
+`logo.webp`, `poster.webp`, `member1.webp`, `member2.webp`, and `shot-01.webp`, `shot-02.webp`, ...
+The data points at these paths (`media.logo`, `media.poster`, `media.shots.desktop[]`,
+`media.shots.mobile[]`, `members[i].photo`). Which array a screenshot goes in decides whether it is
+shown in a browser frame or a phone frame, and array order is carousel order.
 
-To add an asset, drop the file in and set its path in the project entry (`media.logo`,
-`media.poster`, `media.video`, `media.shots.desktop[]`, `media.shots.mobile[]`,
-`members[i].photo`). Which array a screenshot goes in decides whether it is shown in a browser
-frame or a phone frame, and array order is carousel order. `driveLinks` only records where the
-originals are and is never rendered.
+Demo videos are not in the repo. They are MP4 files in a public Supabase storage bucket
+(`video-assets`) and `media.video` holds the full URL. The free plan caps each file at 50MB.
 
-Suggested sizes: logo 256px square, poster 900x1200, screenshots webp under 300KB,
-video H.264 mp4 under about 25MB (or host it elsewhere).
+Sounds and music live in `public/sfx` and `public/music`. `src/utils/music.js` and `src/utils/sfx.js`
+share one audio registry so nothing plays twice, and every sound respects the mute button.
 
-Note: the older sections of this file describe a Pinia/GSAP plan that is not what the app uses now.
+Suggested sizes: logo 512px square, poster 900x1200, screenshots webp up to 1600px wide.
+
+Note: the older sections above describe an earlier Pinia/GSAP plan, 38 mock projects and `/hall` and
+`/project/:slug` routes. That is not what the app uses now. The real routes are `/`, `/projects` and
+`/map`, there are 26 projects, and there is no Pinia or GSAP.
