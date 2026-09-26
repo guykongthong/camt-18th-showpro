@@ -112,9 +112,11 @@ function closeDetail() {
 }
 
 function prevProject() {
+  duckMusic(false);
   select((sel.value - 1 + all.length) % all.length);
 }
 function nextProject() {
+  duckMusic(false);
   select((sel.value + 1) % all.length);
 }
 
