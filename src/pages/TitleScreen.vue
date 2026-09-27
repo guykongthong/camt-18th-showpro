@@ -619,6 +619,18 @@ onBeforeUnmount(() => {
   .power-area .power-hint {
     display: none;
   }
+  /* logo-block normally grows to fill the space above the button and centers
+     itself inside that, which works on the wide desktop box but on a tall
+     phone screen leaves so much room below it that the button lands at the
+     very bottom. Let the whole block size to its content and sit higher up. */
+  .content {
+    justify-content: center;
+    gap: 6dvh;
+  }
+  .logo-block {
+    flex: none;
+    margin-top: 0;
+  }
   .power-mobile {
     position: absolute;
     inset: 0;

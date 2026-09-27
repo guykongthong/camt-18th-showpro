@@ -160,16 +160,20 @@ export function fadeOutTitle(ms = 2400) {
   fade("title", 0, ms);
 }
 
-// silence the background music while a demo video is playing
+// silence the background music while a demo video is playing.
+// the duck-out is quick on purpose: some mobile browsers pause page timers,
+// including this fade, the moment a video's own audio session takes over, so
+// a slow fade there just gets cut off mid-way and sounds like an abrupt stop.
+// finishing fast, before that happens, is what actually sounds like a fade.
 export function duckMusic(on) {
   if (ducked === on) return;
   ducked = on;
   if (!scene || scene === "title" || muted.value) return;
   const a = el(scene);
-  if (on) fade(scene, 0, 400);
+  if (on) fade(scene, 0, 150);
   else {
     if (a.paused) a.play().catch(() => {});
-    fade(scene, TRACKS[scene].volume, 800);
+    fade(scene, TRACKS[scene].volume, 600);
   }
 }
 
