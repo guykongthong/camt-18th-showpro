@@ -5,9 +5,17 @@ import IconChevron from "../components/IconChevron.vue";
 
 const tabHover = ref(false);
 const BOOTH_COUNT = PROJECTS.length;
-const counts = CATEGORIES.map((c) => ({
+const counts = CATEGORIES.map((c, i) => ({
   ...c,
+  num: i + 1,
   count: PROJECTS.filter((p) => p.categories.includes(c.label)).length,
+}));
+// the organizer's own booth zoning, one physical area with no project count
+const COMPANY_ZONE = { num: counts.length + 1, label: "Company Booths", color: "#865936" };
+
+const zones = CATEGORIES.map((c) => ({
+  ...c,
+  projects: PROJECTS.filter((p) => p.categories.includes(c.label)),
 }));
 </script>
 
@@ -32,18 +40,17 @@ const counts = CATEGORIES.map((c) => ({
         <div class="floorplan">
           <div class="fp-head">
             <div class="fp-title">EVENT FLOOR PLAN</div>
-            <div class="fp-scale">SCALE 1:200</div>
           </div>
           <div class="fp-body">
-            <div class="fp-grid"></div>
-            <div class="fp-placeholder mono">
-              <div>event floor plan &mdash; drop image here</div>
-              <div class="sub">landscape, 16:10, booth numbers legible at 100%</div>
+            <div class="room-card room-camt">
+              <img class="room-img" src="/floorplan/camt-112.png" alt="CAMT 112, motion capture room, floor plan" />
+            </div>
+            <div class="room-card room-lobby">
+              <img class="room-img" src="/floorplan/learning-playground.png" alt="Learning Playground lobby floor plan" />
             </div>
           </div>
           <div class="fp-foot">
-            <div>ENTRANCE &mdash; NORTH SIDE</div>
-            <div>{{ BOOTH_COUNT }} PROJECTS &nbsp;&#183;&nbsp; {{ CATEGORIES.length }} CATEGORIES</div>
+            <div>{{ BOOTH_COUNT }} PROJECTS &nbsp;&#183;&nbsp; {{ CATEGORIES.length }} ZONES</div>
           </div>
         </div>
 
@@ -53,20 +60,27 @@ const counts = CATEGORIES.map((c) => ({
             <div class="legend-list">
               <div v-for="l in counts" :key="l.label" class="legend-row">
                 <div class="swatch" :style="{ background: l.color }"></div>
-                <div class="legend-label">{{ l.label }}</div>
-                <div class="legend-range">{{ String(l.count).padStart(2, "0") }}</div>
+                <div class="legend-label">{{ l.num }}. {{ l.label }}</div>
+                <div class="legend-range">{{ l.count }} GRP</div>
+              </div>
+              <div class="legend-row">
+                <div class="swatch" :style="{ background: COMPANY_ZONE.color }"></div>
+                <div class="legend-label">{{ COMPANY_ZONE.num }}. {{ COMPANY_ZONE.label }}</div>
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <div class="panel">
-            <div class="panel-title">AMENITIES</div>
-            <div class="amenities">
-              <div>REGISTRATION &mdash; <span class="accent2">LOBBY</span></div>
-              <div>OPENING CEREMONY &mdash; <span class="accent2">HALL A</span></div>
-              <div>JUDGING DESK &mdash; <span class="accent2">CENTRE</span></div>
-              <div>REFRESHMENTS &mdash; <span class="accent2">EAST WING</span></div>
+      <div class="panel zones-panel">
+        <div class="panel-title">PROJECT ZONES</div>
+        <div class="zones-grid">
+          <div v-for="(z, i) in zones" :key="z.label" class="zone-group">
+            <div class="zone-head">
+              <div class="swatch" :style="{ background: z.color }"></div>
+              <span>{{ i + 1 }}. {{ z.label }} ({{ z.projects.length }})</span>
             </div>
+            <router-link v-for="p in z.projects" :key="p.slug" :to="{ path: '/projects', query: { lock: p.slug } }" class="zone-item">{{ p.name }}</router-link>
           </div>
         </div>
       </div>
@@ -93,10 +107,6 @@ const counts = CATEGORIES.map((c) => ({
         <div class="legal">&copy; 2026 SE CAMT &mdash; INSERT&nbsp;COIN&nbsp;TO&nbsp;CONTINUE</div>
       </div>
 
-      <div class="bottom-nav">
-        <router-link to="/" class="m-btn m-secondary"><span class="arrow"><IconChevron dir="left" /></span>TITLE SCREEN</router-link>
-        <router-link to="/projects" class="m-btn m-secondary">PROJECT SELECT</router-link>
-      </div>
     </div>
 
     <router-link
@@ -157,9 +167,6 @@ const counts = CATEGORIES.map((c) => ({
 .accent {
   color: #ff9500;
 }
-.accent2 {
-  color: #ffc21a;
-}
 .title {
   font-size: clamp(30px, 4.8vw, 66px);
 }
@@ -206,35 +213,29 @@ const counts = CATEGORIES.map((c) => ({
 }
 .fp-body {
   position: relative;
-  aspect-ratio: 16 / 10;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: 1.7fr 1fr;
+  gap: 14px;
+  align-items: start;
   background: repeating-linear-gradient(135deg, #241608 0 8px, #1a1006 8px 16px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
-.fp-grid {
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(90deg, rgba(63, 143, 208, 0.08) 0 1px, transparent 1px 52px),
-    repeating-linear-gradient(180deg, rgba(255, 120, 0, 0.07) 0 1px, transparent 1px 52px);
+@media (max-width: 720px) {
+  .fp-body {
+    grid-template-columns: 1fr;
+  }
 }
-.fp-placeholder {
+.room-card {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 16px 20px;
-  background: rgba(0, 0, 0, 0.66);
-  border: 1px dashed #6a4418;
-  text-align: center;
-  font-size: 12px;
-  letter-spacing: 1px;
-  color: #c9a06a;
+  z-index: 10;
+  border: 1px solid #4a2e12;
+  background: #0d0805;
 }
-.fp-placeholder .sub {
-  font-size: 10px;
-  color: #8a6a4a;
+.room-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #fff;
 }
 
 .side {
@@ -274,13 +275,38 @@ const counts = CATEGORIES.map((c) => ({
   font-size: 8px;
   color: #8fb6d6;
 }
-.amenities {
+.zones-panel {
+  margin-top: 4px;
+}
+.zones-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px 24px;
+}
+.zone-group {
   display: flex;
   flex-direction: column;
+  gap: 7px;
+}
+.zone-head {
+  display: flex;
+  align-items: center;
   gap: 9px;
-  font-size: 8px;
-  line-height: 1.7;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: #ffc21a;
+  margin-bottom: 2px;
+}
+.zone-item {
+  display: block;
+  font-size: 9px;
+  line-height: 1.9;
   color: #c9b493;
+  text-decoration: none;
+}
+.zone-item:hover {
+  color: #f5e2c4;
+  text-decoration: underline;
 }
 
 .foot-title {
@@ -311,21 +337,6 @@ const counts = CATEGORIES.map((c) => ({
   border-radius: 6px;
 }
 
-.bottom-nav {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-  margin-top: 14px;
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: #8fb6d6;
-}
-.bottom-nav a {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-}
 .arrow {
   display: flex;
 }
@@ -372,12 +383,8 @@ const counts = CATEGORIES.map((c) => ({
   .side-tab {
     display: none;
   }
-  .bottom-nav {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-    margin-top: 14px;
-    /* keeps the last button clear of the fixed sound and help buttons */
+  /* keeps the footer clear of the fixed sound and help buttons */
+  .footer-panel {
     margin-bottom: 52px;
   }
 }

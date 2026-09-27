@@ -16,13 +16,13 @@ watch(
 );
 
 // one click sound for the ordinary buttons (the start, power, slot and view buttons have their own)
-const BUTTONS = ".btn, .detail-tab, .chip, .bottom-nav a, .m-btn, .map-tab, .side-tab, .foot-link, .lb-close, .lb-nav, .dot";
+const BUTTONS = ".btn, .detail-tab, .chip, .bottom-nav a, .m-btn, .map-tab, .title-tab, .side-tab, .foot-link, .lb-close, .lb-nav, .dot";
 function onClick(e) {
   if (e.target.closest && e.target.closest(BUTTONS)) playSfx("start");
 }
 
 // hover sound for the back, stage map, browse projects, prev/next, mute and help buttons, mouse only (touch has no hover), once per entry into a button
-const HOVERABLE = ".btn, .map-tab, .side-tab, .detail-tab, .mute, .help-btn";
+const HOVERABLE = ".btn, .map-tab, .title-tab, .side-tab, .detail-tab, .mute, .help-btn";
 function onOver(e) {
   if (e.pointerType && e.pointerType !== "mouse") return;
   const el = e.target.closest && e.target.closest(HOVERABLE);

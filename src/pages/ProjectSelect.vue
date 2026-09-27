@@ -1,6 +1,6 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from "vue";
-import { useRouter } from "vue-router";
+import { ref, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { PROJECTS, CATEGORIES } from "../data/projects.js";
 import { formatDescription } from "../utils/description.js";
 import IconChevron from "../components/IconChevron.vue";
@@ -12,10 +12,16 @@ import { playSfx, playSfxLayer, preloadSfx, takeChoose, playAnnouncer, preloadAn
 import { duckMusic } from "../utils/music.js";
 
 const router = useRouter();
+const route = useRoute();
+// touch has no hover, so a tap can't preview first the way a mouse does. Detect
+// it once and give touch its own two-tap flow: first tap previews, second locks in.
+const isTouch =
+  typeof window !== "undefined" &&
+  (window.matchMedia?.("(pointer: coarse)").matches || navigator.maxTouchPoints > 0);
 const fromTitle = takeChoose();
 const all = PROJECTS.map((p, i) => ({ ...p, i }));
 
-const sel = ref(0);
+const sel = ref(null); // nothing is chosen for you: the preview stays empty until you hover or tap a tile
 const locked = ref(null);
 const toast = ref("");
 const query = ref("");
@@ -24,6 +30,7 @@ const detailOpen = ref(false);
 const wiping = ref(false);
 const locking = ref(false);
 const mapHover = ref(false);
+const titleHover = ref(false);
 const posterOpen = ref(false);
 const howto = ref(false);
 let howtoTimer = null;
@@ -66,6 +73,10 @@ function select(i) {
 }
 
 function hoverSlot(i) {
+  // touch has no real hover: browsers fire a synthetic mouseenter right before
+  // the click on a tap, which would otherwise make every fresh tap look like
+  // a repeat tap and lock in immediately. Real hovering is desktop-only.
+  if (isTouch) return;
   if (locked.value === null) {
     select(i);
     playSfx("hover");
@@ -74,6 +85,12 @@ function hoverSlot(i) {
 
 function tap(i) {
   if (locked.value === null) {
+    if (isTouch && sel.value !== i) {
+      // first tap on this tile just previews it, like hovering would on desktop
+      select(i);
+      playSfx("hover");
+      return;
+    }
     select(i);
     locked.value = i;
     preloadAnnouncer(all[i].slug);
@@ -129,6 +146,24 @@ function onEsc(e) {
 onMounted(() => {
   window.addEventListener("keydown", onEsc);
   preloadSfx();
+  // arriving from a project link elsewhere on the site (e.g. the stage map):
+  // clear any filter so the tile is visible, then lock it in as if tapped twice
+  const lockSlug = route.query.lock;
+  if (lockSlug) {
+    const target = all.find((p) => p.slug === lockSlug);
+    if (target) {
+      cat.value = "ALL";
+      query.value = "";
+      select(target.i);
+      locked.value = target.i;
+      preloadAnnouncer(target.slug);
+      playAnnouncer(target.slug);
+      nextTick(() => {
+        document.querySelector(".slot-locked")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    }
+    router.replace({ path: "/projects" });
+  }
   // the entrance flash and fade are done after about 0.7s
   // played near the end of the slow fade-in
   if (fromTitle) chooseTimer = setTimeout(() => playSfx("choose"), 1500);
@@ -158,7 +193,7 @@ const list = computed(() =>
   })
 );
 
-const selected = computed(() => all.find((p) => p.i === sel.value) || all[0]);
+const selected = computed(() => all.find((p) => p.i === sel.value) || null);
 const chips = ["ALL", ...CATEGORIES.map((c) => c.label)];
 const CAT_SLUGS = {
   ALL: "all",
@@ -195,10 +230,11 @@ function team(p) {
 }
 
 const platformLabel = computed(
-  () => ({ mobile: "MOBILE APP", web: "WEB APP", both: "WEB + MOBILE" })[selected.value.platform]
+  () => ({ mobile: "MOBILE APP", web: "WEB APP", both: "WEB + MOBILE" })[selected.value?.platform]
 );
 
 const shotGroups = computed(() => {
+  if (!selected.value) return [];
   const { shots } = selected.value.media;
   const groups = [];
   if (shots.desktop.length) groups.push({ type: "desktop", title: "WEB", items: shots.desktop });
@@ -206,9 +242,10 @@ const shotGroups = computed(() => {
   return groups;
 });
 
-const about = computed(() => formatDescription(selected.value.description));
+const about = computed(() => (selected.value ? formatDescription(selected.value.description) : []));
 const metaLine = computed(() => {
   const p = selected.value;
+  if (!p) return "";
   return [p.categories.join(" \u00b7 "), p.booth ? "BOOTH " + p.booth : null, platformLabel.value]
     .filter(Boolean)
     .join(" \u00b7 ");
@@ -254,24 +291,38 @@ const boardGroups = computed(() => {
           </div>
         </transition>
 
-        <div class="preview" :class="{ 'no-poster': !selected.media.poster }">
-          <div v-if="selected.media.poster" class="shot" :key="'shot' + selected.i" @click="posterOpen = true">
-            <MediaImg :src="selected.media.poster" :alt="selected.name + ' poster'" fit="cover">
+        <!-- always the same two-column shape, selected or not, so nothing resizes or
+             shifts the tiles below when the first project gets hovered or tapped -->
+        <div class="preview" :class="{ 'no-poster': selected && !selected.media.poster }">
+          <div
+            v-if="!selected || selected.media.poster"
+            class="shot"
+            :class="{ empty: !selected }"
+            :key="'shot' + (selected ? selected.i : 'none')"
+            @click="selected && (posterOpen = true)"
+          >
+            <MediaImg v-if="selected" :src="selected.media.poster" :alt="selected.name + ' poster'" fit="cover">
               <template #fallback><span></span></template>
             </MediaImg>
-            <div class="shot-num">{{ selected.num }}</div>
+            <div v-if="selected" class="shot-num">{{ selected.num }}</div>
           </div>
-          <div class="info" :key="'info' + selected.i">
-            <div class="meta">{{ metaLine }}</div>
-            <div class="arcade-display name" :class="{ 'name-long': selected.name.length > 22 }">{{ selected.name }}</div>
-            <div class="pair">
-              <div>TEAM<br /><span class="fg">{{ team(selected) }}</span></div>
-              <div>ADVISOR<br /><span class="fg">{{ selected.advisor.name }}</span></div>
-            </div>
-            <div class="tags">
-              <div v-for="t in selected.tech.slice(0, 8)" :key="t" class="tag-chip">{{ t }}</div>
-              <div v-if="selected.tech.length > 8" class="tag-chip">+{{ selected.tech.length - 8 }}</div>
-            </div>
+          <div class="info" :class="{ 'empty-info': !selected }" :key="'info' + (selected ? selected.i : 'none')">
+            <template v-if="selected">
+              <div class="meta">{{ metaLine }}</div>
+              <div class="arcade-display name" :class="{ 'name-long': selected.name.length > 22 }">{{ selected.name }}</div>
+              <div class="pair">
+                <div>TEAM<br /><span class="fg">{{ team(selected) }}</span></div>
+                <div>ADVISOR<br /><span class="fg">{{ selected.advisor.name }}</span></div>
+              </div>
+              <div class="tags">
+                <div v-for="t in selected.tech.slice(0, 8)" :key="t" class="tag-chip">{{ t }}</div>
+                <div v-if="selected.tech.length > 8" class="tag-chip">+{{ selected.tech.length - 8 }}</div>
+              </div>
+            </template>
+            <template v-else>
+              <div class="arcade-display name">SE'S 18TH SHOWPRO</div>
+              <div class="empty-hint mono">HOVER (OR TAP) A TILE BELOW TO PREVIEW A PROJECT</div>
+            </template>
           </div>
         </div>
 
@@ -360,6 +411,17 @@ const boardGroups = computed(() => {
       </div>
     </div>
 
+    <router-link
+      to="/"
+      class="title-tab"
+      :class="{ hover: titleHover }"
+      @mouseenter="titleHover = true"
+      @mouseleave="titleHover = false"
+    >
+      <span class="arrow"><IconChevron dir="left" /></span>
+      <span class="title-tab-label">TITLE SCREEN</span>
+    </router-link>
+
     <button class="help-btn" aria-label="How to use this page" @click="howto = true">?</button>
 
     <transition name="howto">
@@ -372,7 +434,7 @@ const boardGroups = computed(() => {
               <div>
                 <b>PICK A PROJECT</b>
                 <span class="mouse-t">Move your mouse over a tile to preview the project on the big card.</span>
-                <span class="touch-t">Tap a tile to show that project on the big card.</span>
+                <span class="touch-t">Tap a tile to show that project on the big card. Tap it again to lock it in.</span>
               </div>
             </li>
             <li>
@@ -380,7 +442,7 @@ const boardGroups = computed(() => {
               <div>
                 <b>LOCK IT IN</b>
                 <span class="mouse-t">Click a tile to lock it in. To pick a different one, click the locked tile again to unlock.</span>
-                <span class="touch-t">Your tap also locks it in. To pick a different one, tap the locked tile again to unlock.</span>
+                <span class="touch-t">Tap a different tile to preview that one instead. To pick a different one after locking in, tap the locked tile again to unlock.</span>
               </div>
             </li>
             <li>
@@ -405,7 +467,7 @@ const boardGroups = computed(() => {
       </div>
     </transition>
 
-    <Lightbox :open="posterOpen" :items="[selected.media.poster]" @close="posterOpen = false" />
+    <Lightbox :open="posterOpen" :items="selected ? [selected.media.poster] : []" @close="posterOpen = false" />
 
     <router-link
       to="/map"
@@ -669,6 +731,13 @@ const boardGroups = computed(() => {
     min-height: 0;
     padding: 14px 14px 0;
   }
+  /* the shot and info stack as separate rows on mobile instead of sharing one,
+     so info needs its own reserved height to match a typical filled card and
+     avoid a jump the first time a project gets picked */
+  .info {
+    min-height: 260px;
+    padding-bottom: 14px;
+  }
 }
 .preview.no-poster {
   grid-template-columns: 1fr;
@@ -698,6 +767,17 @@ const boardGroups = computed(() => {
   background: #ff7300;
   font-size: 9px;
   color: #1c0c04;
+}
+.empty-info {
+  opacity: 0.55;
+}
+.empty-info .name {
+  font-size: clamp(22px, 3.4vw, 40px);
+}
+.empty-hint {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: #8fb6d6;
 }
 .info {
   align-self: stretch;
@@ -1075,6 +1155,41 @@ const boardGroups = computed(() => {
   height: 14px;
 }
 
+.title-tab {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 11;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 14px;
+  border: 2px solid #ffc21a;
+  border-left: 0;
+  background: linear-gradient(180deg, #ff9500, #d43c00);
+  opacity: 0.42;
+  transition: opacity 0.22s ease;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #1c0c04;
+}
+.title-tab.hover {
+  opacity: 1;
+  box-shadow: 6px 0 24px rgba(255, 140, 0, 0.5);
+}
+.title-tab-label {
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 0;
+  opacity: 0;
+  transition: max-width 0.26s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.2s ease;
+}
+.title-tab.hover .title-tab-label {
+  max-width: 140px;
+  opacity: 1;
+}
+
 .map-tab {
   position: fixed;
   right: 0;
@@ -1110,11 +1225,16 @@ const boardGroups = computed(() => {
   opacity: 1;
 }
 
+.bottom-nav {
+  display: none;
+}
 @media (max-width: 720px) {
-  .map-tab {
+  .map-tab,
+  .title-tab {
     display: none;
   }
   .bottom-nav {
+    display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: 10px;

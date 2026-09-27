@@ -2,60 +2,32 @@
 export const CATEGORIES = [
   {
     "label": "Business",
-    "color": "#ff7300"
-  },
-  {
-    "label": "Technology",
-    "color": "#ffc21a"
+    "color": "#0090f9"
   },
   {
     "label": "Medical",
-    "color": "#8fb6d6"
-  },
-  {
-    "label": "Entertainment",
-    "color": "#d43c00"
-  },
-  {
-    "label": "Education",
-    "color": "#3f8fd0"
-  },
-  {
-    "label": "Finance",
-    "color": "#c9b493"
-  },
-  {
-    "label": "Social & Community",
-    "color": "#ff9eb5"
+    "color": "#ff7ae3"
   },
   {
     "label": "Sports",
-    "color": "#7ed957"
+    "color": "#196479"
+  },
+  {
+    "label": "Education",
+    "color": "#ffcb45"
+  },
+  {
+    "label": "Finance",
+    "color": "#5ee16a"
   },
   {
     "label": "IoT",
-    "color": "#5fd4c4"
+    "color": "#9a9a9a"
   },
   {
-    "label": "Tourism",
-    "color": "#f2a65a"
+    "label": "Social & Community",
+    "color": "#ff5354"
   },
-  {
-    "label": "Real Estate & Housing",
-    "color": "#b28dff"
-  },
-  {
-    "label": "Security",
-    "color": "#e05a5a"
-  },
-  {
-    "label": "Transportation",
-    "color": "#9ab0c2"
-  },
-  {
-    "label": "Pet",
-    "color": "#e8c88a"
-  }
 ];
 
 export const PROJECTS = [
@@ -241,8 +213,7 @@ export const PROJECTS = [
     "name": "AI Restaurant Chatbot Web-Based System",
     "short": "AI Restaurant",
     "categories": [
-      "Business",
-      "Technology"
+      "Business"
     ],
     "platform": "web",
     "description": "The **AI Restaurant Chatbot Web-Based System** is a web application designed to improve the restaurant experience for both customers and restaurant staff. Customers can browse menu items, view detailed information about ingredients, allergens, and dietary options, and interact with an AI chatbot to ask menu-related questions and receive helpful responses.\n\nThe system also provides personalized menu recommendations based on customers’ dietary preferences, allergens, and spice preferences. Customers can place and confirm orders, view their order information, and receive notifications about order status updates.\n\nFor restaurant management, authorized staff and administrators can securely manage menu information, view customer orders, update order statuses, and receive important system notifications. By combining AI chatbot assistance, personalized recommendations, order management, and menu management in one web-based platform, the system aims to make restaurant services more convenient, accessible, and efficient.\n",
@@ -375,8 +346,7 @@ export const PROJECTS = [
     "name": "GlowShade",
     "short": "GlowShade",
     "categories": [
-      "Business",
-      "Entertainment"
+      "Business"
     ],
     "platform": "mobile",
     "description": "GlowShade is a mobile application for hair coloring enthusiasts, designed with a warm, cozy witch/magic theme. It has skin tone analysis and hair assessment to recommend suitable shades and estimate the right dye quantity, then lets users preview results through Virtual Try-On or mix their own custom colors. The app also offers a product catalog, trending hair color inspiration, and Daily Quests with an XP/Level system — all brought to life by an interactive witch mascot that offers friendly, personalized suggestions throughout the experience.",
@@ -578,9 +548,7 @@ export const PROJECTS = [
     "name": "HorPlug",
     "short": "HorPlug",
     "categories": [
-      "Business",
-      "Finance",
-      "Real Estate & Housing"
+      "Finance"
     ],
     "platform": "both",
     "description": "HorPlug is a centralized, cross-platform Smart Dormitory Management System (available on Web and Mobile) designed to bridge the operational gap between landlords and tenants. It replaces traditional manual processes such as spreadsheet tracking, paper-based invoices, and scattered chat communications with a unified, efficient digital ecosystem.",
@@ -643,8 +611,6 @@ export const PROJECTS = [
     "name": "RoamiO",
     "short": "RoamiO",
     "categories": [
-      "Tourism",
-      "Entertainment",
       "Social & Community"
     ],
     "platform": "mobile",
@@ -817,8 +783,7 @@ export const PROJECTS = [
     "name": "CVision",
     "short": "CVision",
     "categories": [
-      "Business",
-      "Technology"
+      "Business"
     ],
     "platform": "web",
     "description": "CVision is an AI-powered web-based application designed to bridge the gap between job seekers and industry expectations. The project is motivated by the highly competitive global job market, where recent graduates and early-career professionals often struggle to create effective resumes that highlight their strengths due to limited experience.\n\nCVision addresses this gap by analyzing uploaded CVs using artificial intelligence to provide a quality score and constructive feedback, while simultaneously matching the user's qualifications with real-time job opportunities retrieved via external APIs.",
@@ -983,9 +948,7 @@ export const PROJECTS = [
     "name": "ReelCast",
     "short": "ReelCast",
     "categories": [
-      "Business",
-      "Entertainment",
-      "Technology"
+      "Business"
     ],
     "platform": "web",
     "description": "ReelCast is an AI-powered platform for creating and managing promotional short-form videos for businesses, online sellers, marketers, and content creators. The project aims to reduce the time, effort, and technical skills required to produce marketing content. Users can manage their products, create campaigns, and generate promotional videos using AI by providing product information, images, and prompts. The platform also includes features such as Guide Me, Prompt Template Library, and Enhance Prompt to help users create more effective prompts and improve the quality of generated content, even if they have little experience with AI or video editing.\n\nIn addition to AI video generation, ReelCast provides Product and Campaign Management features that allow users to organize products, generated reels, and marketing activities in one place. Generated videos can be saved to the Product Library and reused in future campaigns. Users can create campaigns, select products and reels, manage campaign details, and prepare content for publishing. This integrated workflow helps users avoid switching between multiple tools for product management, video creation, and campaign organization.\n\nReelCast also supports content scheduling and publishing through connected platforms. Users can publish content immediately or schedule it for a specific date and time, view publishing status, cancel pending posts, and reschedule failed or pending content. The system uses a modern web architecture with a frontend, backend, PostgreSQL database, Docker-based infrastructure, and external AI services for prompt processing and video generation. Overall, ReelCast combines AI, software engineering, digital marketing, and business automation to provide a centralized platform that helps users create promotional content faster, manage campaigns more efficiently, and simplify the entire process from product preparation to content publishing.",
@@ -1113,7 +1076,6 @@ export const PROJECTS = [
     "name": "EZ Stats Football Analysis",
     "short": "EZ Stats",
     "categories": [
-      "Technology",
       "Sports"
     ],
     "platform": "web",
@@ -1176,8 +1138,7 @@ export const PROJECTS = [
     "name": "PETTO",
     "short": "PETTO",
     "categories": [
-      "Medical",
-      "Pet"
+      "Medical"
     ],
     "platform": "mobile",
     "description": "PETTO is a mobile application for pet health management. It enables pet owners to manage pet profiles, perform AI-based health assessments, track daily activities, and monitor their pets’ health to encourage proactive and effective pet care.",
@@ -1238,9 +1199,7 @@ export const PROJECTS = [
     "name": "Converge",
     "short": "Converge",
     "categories": [
-      "Business",
-      "Education",
-      "Technology"
+      "Education"
     ],
     "platform": "web",
     "description": "Converge is a web application that helps learning centers arrange class appointments. It brings teacher availability, branches, bookings, and user accounts into one place. Administrators can book sessions manually or use a suggestion engine to find suitable times while accounting for schedule conflicts and travel between branches. Capacity warnings help staff plan space, while students and linked parents can view their confirmed classes.",
@@ -1353,9 +1312,7 @@ export const PROJECTS = [
     "name": "Parkpilot",
     "short": "ParkPilot",
     "categories": [
-      "IoT",
-      "Technology",
-      "Transportation"
+      "IoT"
     ],
     "platform": "both",
     "description": "ParkPilot is a smart parking management system that uses real-time camera data to show available spaces, predict when parking lots will be full, and alert drivers through a chatbot. It helps reduce parking search time and improves parking space utilization.",
@@ -1491,8 +1448,7 @@ export const PROJECTS = [
     "name": "OccuVision",
     "short": "OccuVision",
     "categories": [
-      "IoT",
-      "Security"
+      "IoT"
     ],
     "platform": "web",
     "description": "OccuVision is an occupancy monitoring system that uses smart cameras and computer vision to detect and monitor the number of people in rooms in real time. The system collects occupancy data and presents it through a centralized web dashboard, allowing administrators to monitor room usage, analyze occupancy patterns, and make informed decisions about the people traffic in their space. ",
@@ -1546,8 +1502,7 @@ export const PROJECTS = [
     "name": "Bobo Tour Management",
     "short": "Bobo Tour",
     "categories": [
-      "Business",
-      "Tourism"
+      "Business"
     ],
     "platform": "both",
     "description": "Bobo Tour Management is a web-based platform designed to support job management between employers and freelancers in the tourism industry. The system acts as an intermediary platform where employers can post tour jobs with details such as date, time, route, and job requirements, while freelancers can manage their availability and view available jobs. The system analyzes freelancers’ information and provides a list of freelancers who match the job requirements to assist employers in identifying suitable candidates. However, the final decision to select a freelancer remains with the employers. By providing a centralized platform and matching support, the system helps improve efficiency and organization of tour job management.",
@@ -1608,10 +1563,7 @@ export const PROJECTS = [
     "name": "PettyBounty",
     "short": "PettyBounty",
     "categories": [
-      "Business",
-      "Entertainment",
-      "Social & Community",
-      "Pet"
+      "Social & Community"
     ],
     "platform": "mobile",
     "description": "\"PettyBounty\" is our project to create a mobile application that helps Bounty Hunters who face the\ndistressing challenge of finding lost pets, as well as community members willing to assist in search\noperations. This application will assist them by providing an image processing system for accurate pet\nidentification and classification, combined with a gamified reward system to incentivize community\n\"Bounty Hunters.\" This approach optimizes the pet recovery process, eliminates inefficient manual search\nmethods, and ensures secure, real-time coordination within the neighborhood.",
