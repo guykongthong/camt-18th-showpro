@@ -1467,20 +1467,21 @@ export const PROJECTS = [
       "poster": "/projects/periokit/poster.webp",
       "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/periokit.mp4",
       "shots": {
-        "desktop": [
-          "/projects/periokit/shot-05.webp",
-          "/projects/periokit/shot-08.webp",
-          "/projects/periokit/shot-06.webp",
-          "/projects/periokit/shot-07.webp",
-          "/projects/periokit/shot-09.webp",
-          "/projects/periokit/shot-04.webp",
-          "/projects/periokit/shot-03.webp"
-        ],
-        "mobile": [
-          "/projects/periokit/shot-01.webp",
-          "/projects/periokit/shot-02.webp"
-        ]
-      }
+      "desktop": [
+        "/projects/periokit/shot-05.webp",
+        "/projects/periokit/shot-08.webp",
+        "/projects/periokit/shot-06.webp",
+        "/projects/periokit/shot-07.webp",
+        "/projects/periokit/shot-09.webp",
+        "/projects/periokit/shot-04.webp",
+        "/projects/periokit/shot-03.webp",
+        "/projects/periokit/shot-01.webp",
+        "/projects/periokit/shot-02.webp"
+      ],
+      "mobile": []
+    }
+
+
     }
   },
   {
