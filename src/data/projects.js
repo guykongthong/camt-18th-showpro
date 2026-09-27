@@ -1176,7 +1176,8 @@ export const PROJECTS = [
     "name": "PETTO",
     "short": "PETTO",
     "categories": [
-      "Medical"
+      "Medical",
+      "Pet"
     ],
     "platform": "mobile",
     "description": "PETTO is a mobile application for pet health management. It enables pet owners to manage pet profiles, perform AI-based health assessments, track daily activities, and monitor their pets’ health to encourage proactive and effective pet care.",

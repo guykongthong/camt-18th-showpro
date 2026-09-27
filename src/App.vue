@@ -21,8 +21,8 @@ function onClick(e) {
   if (e.target.closest && e.target.closest(BUTTONS)) playSfx("start");
 }
 
-// hover sound for the back, stage map, browse projects and prev/next buttons, mouse only (touch has no hover), once per entry into a button
-const HOVERABLE = ".btn, .map-tab, .side-tab, .detail-tab";
+// hover sound for the back, stage map, browse projects, prev/next, mute and help buttons, mouse only (touch has no hover), once per entry into a button
+const HOVERABLE = ".btn, .map-tab, .side-tab, .detail-tab, .mute, .help-btn";
 function onOver(e) {
   if (e.pointerType && e.pointerType !== "mouse") return;
   const el = e.target.closest && e.target.closest(HOVERABLE);
