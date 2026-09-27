@@ -8,7 +8,7 @@ import IconPlay from "../components/IconPlay.vue";
 import MediaImg from "../components/MediaImg.vue";
 import ShotCarousel from "../components/ShotCarousel.vue";
 import Lightbox from "../components/Lightbox.vue";
-import { playSfx, playSfxLayer, preloadSfx, takeChoose, playAnnouncer, preloadAnnouncer } from "../utils/sfx.js";
+import { playSfx, playSfxLayer, preloadSfx, takeChoose, playAnnouncer, preloadAnnouncer, playCategoryAnnouncer } from "../utils/sfx.js";
 import { duckMusic } from "../utils/music.js";
 
 const router = useRouter();
@@ -52,10 +52,11 @@ let t0 = null;
 let t1 = null;
 let t2 = null;
 
-function say(msg) {
+function say(msg, isError) {
   clearTimeout(toastTimer);
   toast.value = msg;
   toastTimer = setTimeout(() => (toast.value = ""), 2000);
+  if (isError) playSfxLayer("error");
 }
 
 function select(i) {
@@ -81,13 +82,13 @@ function tap(i) {
     locked.value = null;
     say("UNLOCKED — HOVER TO BROWSE");
   } else {
-    say("CLICK THE LOCKED SLOT TO UNLOCK FIRST");
+    say("CLICK THE LOCKED SLOT TO UNLOCK FIRST", true);
   }
 }
 
 function launch() {
   if (locked.value === null) {
-    say("LOCK IN A PROJECT FIRST — CLICK A SLOT");
+    say("LOCK IN A PROJECT FIRST — CLICK A SLOT", true);
     return;
   }
   if (locking.value || wiping.value) return;
@@ -159,6 +160,19 @@ const list = computed(() =>
 
 const selected = computed(() => all.find((p) => p.i === sel.value) || all[0]);
 const chips = ["ALL", ...CATEGORIES.map((c) => c.label)];
+const CAT_SLUGS = {
+  ALL: "all",
+  "Social & Community": "social-community",
+  IoT: "iot",
+  "Real Estate & Housing": "real-estate-housing",
+};
+function catSlug(label) {
+  return CAT_SLUGS[label] || label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+function pickCategory(label) {
+  cat.value = label;
+  playCategoryAnnouncer(catSlug(label));
+}
 const hint = computed(() =>
   locked.value === null ? "HOVER (OR TAP) A SLOT TO LOCK IN" : "LOCKED — CLICK THE SAME SLOT AGAIN TO UNLOCK"
 );
@@ -269,7 +283,7 @@ const boardGroups = computed(() => {
           <span class="search-ico"><IconPlay dir="right" /></span>
           <input type="text" v-model="query" placeholder="SEARCH BY NAME" />
         </div>
-        <select v-model="cat" class="cat-select" aria-label="Filter by category" @change="playSfx('start')">
+        <select v-model="cat" class="cat-select" aria-label="Filter by category" @change="playCategoryAnnouncer(catSlug(cat))">
           <option v-for="c in chips" :key="c" :value="c">{{ c === "ALL" ? "ALL CATEGORIES" : c }}</option>
         </select>
         <div class="chips">
@@ -278,7 +292,7 @@ const boardGroups = computed(() => {
             :key="c"
             class="chip"
             :class="{ active: cat === c }"
-            @click="cat = c"
+            @click="pickCategory(c)"
           >
             {{ c }}
           </div>

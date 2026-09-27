@@ -4,10 +4,11 @@ const SOUNDS = {
   hover: { src: "/sfx/hover.mp3", volume: 0.5 },
   start: { src: "/sfx/start.mp3", volume: 0.7 },
   slot: { src: "/sfx/slot.mp3", volume: 0.3 },
-  tvon: { src: "/sfx/tv-on.mp3", volume: 0.7 },
+  tvon: { src: "/sfx/tv-on-2.mp3", volume: 0.7 },
   welcome: { src: "/sfx/welcome.mp3", volume: 0.9 },
   launch: { src: "/sfx/launch.mp3", volume: 0.6 },
   btnhover: { src: "/sfx/button-hover.mp3", volume: 0.5 },
+  error: { src: "/sfx/error.mp3", volume: 0.7 },
   choose: { src: "/sfx/choose-character.mp3", volume: 0.8 },
   ready: { src: "/sfx/ready.mp3", volume: 0.6 },
 };
@@ -33,6 +34,17 @@ function line(slug) {
     G.lines[slug] = a;
   }
   return G.lines[slug];
+}
+
+function catLine(slug) {
+  const key = "cat:" + slug;
+  if (!G.lines[key]) {
+    const a = new Audio(`/sfx/categories/${slug}.mp3`);
+    a.preload = "auto";
+    a.volume = 0.8;
+    G.lines[key] = a;
+  }
+  return G.lines[key];
 }
 
 // only one effect at a time: a new one cuts off the previous one
@@ -105,6 +117,9 @@ export function preloadAnnouncer(slug) {
 }
 export function playAnnouncer(slug) {
   play(line(slug));
+}
+export function playCategoryAnnouncer(slug) {
+  play(catLine(slug));
 }
 
 // set on the title screen so the roster knows it was just entered from there
