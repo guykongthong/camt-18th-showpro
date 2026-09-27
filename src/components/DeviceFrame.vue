@@ -1,13 +1,29 @@
 <script setup>
+import { ref, watch } from "vue";
 import MediaImg from "./MediaImg.vue";
 
-defineProps({
+const props = defineProps({
   type: { type: String, default: "desktop" }, // "phone" | "desktop"
   src: { type: String, default: null },
   alt: { type: String, default: "" },
   label: { type: String, default: "SCREENSHOT" },
   ratio: { type: String, default: "16 / 10" }, // desktop screen shape, from the group's images
 });
+
+// a phone frame normally crops to fill (real phone screenshots match its shape).
+// when a submitted image is nowhere near a phone's proportions, cropping it
+// hides most of it, so show it whole instead, letterboxed.
+const PHONE_RATIO = 9 / 19.5;
+const containPhone = ref(false);
+watch(
+  () => props.src,
+  () => (containPhone.value = false)
+);
+function onNaturalSize({ w, h }) {
+  if (props.type !== "phone") return;
+  const off = Math.abs(w / h / PHONE_RATIO - 1);
+  containPhone.value = off > 0.35;
+}
 </script>
 
 <template>
@@ -16,7 +32,13 @@ defineProps({
       <span></span><span></span><span></span>
     </div>
     <div class="screen" :style="type === 'desktop' ? { aspectRatio: ratio } : null">
-      <MediaImg :src="src" :alt="alt" :fit="type === 'desktop' ? 'contain' : 'cover'" position="top">
+      <MediaImg
+        :src="src"
+        :alt="alt"
+        :fit="type === 'desktop' || containPhone ? 'contain' : 'cover'"
+        :position="type === 'desktop' || containPhone ? 'center' : 'top'"
+        @natural-size="onNaturalSize"
+      >
         <template #fallback>
           <div class="ph mono">
             <div>{{ label }}</div>

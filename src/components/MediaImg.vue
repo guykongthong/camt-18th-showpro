@@ -8,8 +8,15 @@ const props = defineProps({
   position: { type: String, default: "center" },
 });
 
+const emit = defineEmits(["natural-size"]);
+
 const failed = ref(false);
 watch(() => props.src, () => (failed.value = false));
+
+function onLoad(e) {
+  const img = e.target;
+  if (img.naturalWidth && img.naturalHeight) emit("natural-size", { w: img.naturalWidth, h: img.naturalHeight });
+}
 </script>
 
 <template>
@@ -21,6 +28,7 @@ watch(() => props.src, () => (failed.value = false));
     :style="{ objectFit: fit, objectPosition: position }"
     loading="lazy"
     decoding="async"
+    @load="onLoad"
     @error="failed = true"
   />
   <slot v-else name="fallback">
