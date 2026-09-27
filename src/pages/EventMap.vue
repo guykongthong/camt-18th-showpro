@@ -50,7 +50,7 @@ const zones = CATEGORIES.map((c) => ({
             </div>
           </div>
           <div class="fp-foot">
-            <div>{{ BOOTH_COUNT }} PROJECTS &nbsp;&#183;&nbsp; {{ CATEGORIES.length }} ZONES</div>
+            <div>{{ BOOTH_COUNT }} PROJECTS &nbsp;&#183;&nbsp; {{ CATEGORIES.length + 1 }} ZONES</div>
           </div>
         </div>
 

@@ -199,7 +199,6 @@ const CAT_SLUGS = {
   ALL: "all",
   "Social & Community": "social-community",
   IoT: "iot",
-  "Real Estate & Housing": "real-estate-housing",
 };
 function catSlug(label) {
   return CAT_SLUGS[label] || label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -442,7 +441,7 @@ const boardGroups = computed(() => {
               <div>
                 <b>LOCK IT IN</b>
                 <span class="mouse-t">Click a tile to lock it in. To pick a different one, click the locked tile again to unlock.</span>
-                <span class="touch-t">Tap a different tile to preview that one instead. To pick a different one after locking in, tap the locked tile again to unlock.</span>
+                <span class="touch-t">Tap the same tile again to lock it in. To pick a different one after locking in, tap the locked tile again to unlock.</span>
               </div>
             </li>
             <li>
