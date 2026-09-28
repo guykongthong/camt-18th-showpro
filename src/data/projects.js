@@ -648,7 +648,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/roamio/logo.webp",
       "poster": "/projects/roamio/poster.webp",
-      "video": null,
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/roamio.mp4",
       "shots": {
         "desktop": [],
         "mobile": [
