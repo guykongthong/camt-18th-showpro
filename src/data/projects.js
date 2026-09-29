@@ -70,7 +70,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/anglesync/logo.webp",
       "poster": "/projects/anglesync/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/anglesync.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/anglesync.mp4",
       "shots": {
         "desktop": [],
         "mobile": [
@@ -128,7 +128,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/skinbuddy/logo.webp",
       "poster": "/projects/skinbuddy/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/skinbuddy.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/skinbuddy.mp4",
       "shots": {
         "desktop": [
           "/projects/skinbuddy/shot-09.webp",
@@ -189,7 +189,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/evenite/logo.webp",
       "poster": "/projects/evenite/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/evenite.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/evenite.mp4",
       "shots": {
         "desktop": [],
         "mobile": [
@@ -252,7 +252,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/ai-restaurant/logo.webp",
       "poster": "/projects/ai-restaurant/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/ai-restaurant.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/ai-restaurant.mp4",
       "shots": {
         "desktop": [
           "/projects/ai-restaurant/shot-01.webp",
@@ -322,7 +322,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/dining-insight/logo.webp",
       "poster": "/projects/dining-insight/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/dining-insight.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/dining-insight.mp4",
       "shots": {
         "desktop": [
           "/projects/dining-insight/shot-09.webp",
@@ -384,7 +384,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/glowshade/logo.webp",
       "poster": "/projects/glowshade/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/glowshade.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/glowshade.mp4",
       "shots": {
         "desktop": [],
         "mobile": [
@@ -444,7 +444,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/idrs/logo.webp",
       "poster": "/projects/idrs/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/idrs.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/idrs.mp4",
       "shots": {
         "desktop": [
           "/projects/idrs/shot-02.webp",
@@ -524,7 +524,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/ajtrade/logo.webp",
       "poster": "/projects/ajtrade/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/ajtrade.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/ajtrade.mp4",
       "shots": {
         "desktop": [
           "/projects/ajtrade/shot-09.webp",
@@ -587,7 +587,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/horplug/logo.webp",
       "poster": "/projects/horplug/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/horplug.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/horplug.mp4",
       "shots": {
         "desktop": [],
         "mobile": [
@@ -648,7 +648,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/roamio/logo.webp",
       "poster": "/projects/roamio/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/roamio.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/roamio.mp4",
       "shots": {
         "desktop": [],
         "mobile": [
@@ -702,7 +702,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/starmory/logo.webp",
       "poster": "/projects/starmory/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/starmory.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/starmory.mp4",
       "shots": {
         "desktop": [],
         "mobile": [
@@ -759,7 +759,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/runna/logo.webp",
       "poster": "/projects/runna/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/runna.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/runna.mp4",
       "shots": {
         "desktop": [],
         "mobile": [
@@ -818,7 +818,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/cvision/logo.webp",
       "poster": "/projects/cvision/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/cvision.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/cvision.mp4",
       "shots": {
         "desktop": [
           "/projects/cvision/shot-01.webp",
@@ -875,7 +875,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/vocasense/logo.webp",
       "poster": "/projects/vocasense/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/vocasense.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/vocasense.mp4",
       "shots": {
         "desktop": [
           "/projects/vocasense/shot-05.webp",
@@ -924,7 +924,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/dynamic-ledger-insight/logo.webp",
       "poster": "/projects/dynamic-ledger-insight/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/dynamic-ledger-insight.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/dynamic-ledger-insight.mp4",
       "shots": {
         "desktop": [],
         "mobile": [
@@ -993,7 +993,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/reelcast/logo.webp",
       "poster": "/projects/reelcast/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/reelcast.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/reelcast.mp4",
       "shots": {
         "desktop": [
           "/projects/reelcast/shot-01.webp",
@@ -1052,7 +1052,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/lifeos/logo.webp",
       "poster": "/projects/lifeos/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/lifeos.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/lifeos.mp4",
       "shots": {
         "desktop": [
           "/projects/lifeos/shot-01.webp",
@@ -1114,7 +1114,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/ez-stats-football-analysis/logo.webp",
       "poster": "/projects/ez-stats-football-analysis/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/ez-stats-football-analysis.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/ez-stats-football-analysis.mp4",
       "shots": {
         "desktop": [
           "/projects/ez-stats-football-analysis/shot-01.webp",
@@ -1174,7 +1174,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/petto/logo.webp",
       "poster": "/projects/petto/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/petto.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/petto.mp4",
       "shots": {
         "desktop": [
           "/projects/petto/shot-04.webp",
@@ -1234,7 +1234,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/converge/logo.webp",
       "poster": "/projects/converge/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/converge.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/converge.mp4",
       "shots": {
         "desktop": [
           "/projects/converge/shot-09.webp",
@@ -1288,7 +1288,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/sleepsense/logo.webp",
       "poster": "/projects/sleepsense/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/sleepsense.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/sleepsense.mp4",
       "shots": {
         "desktop": [],
         "mobile": [
@@ -1360,7 +1360,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/parkpilot/logo.webp",
       "poster": "/projects/parkpilot/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/parkpilot.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/parkpilot.mp4",
       "shots": {
         "desktop": [
           "/projects/parkpilot/shot-08.webp",
@@ -1423,7 +1423,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/periokit/logo.webp",
       "poster": "/projects/periokit/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/periokit.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/periokit.mp4",
       "shots": {
       "desktop": [
         "/projects/periokit/shot-05.webp",
@@ -1483,7 +1483,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/occuvision/logo.webp",
       "poster": "/projects/occuvision/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/occuvision.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/occuvision.mp4",
       "shots": {
         "desktop": [
           "/projects/occuvision/shot-05.webp",
@@ -1538,7 +1538,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/bobo-tour-management/logo.webp",
       "poster": "/projects/bobo-tour-management/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/bobo-tour-management.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/bobo-tour-management.mp4",
       "shots": {
         "desktop": [
           "/projects/bobo-tour-management/shot-06.webp",
@@ -1597,7 +1597,7 @@ export const PROJECTS = [
     "media": {
       "logo": "/projects/pettybounty/logo.webp",
       "poster": "/projects/pettybounty/poster.webp",
-      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos/pettybounty.mp4",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/pettybounty.mp4",
       "shots": {
         "desktop": [
           "/projects/pettybounty/shot-08.webp",
@@ -1610,6 +1610,66 @@ export const PROJECTS = [
           "/projects/pettybounty/shot-10.webp",
           "/projects/pettybounty/shot-06.webp",
           "/projects/pettybounty/shot-07.webp"
+        ],
+        "mobile": []
+      }
+    }
+  },
+  {
+    "num": "27",
+    "slug": "immersio",
+    "name": "Immersio",
+    "short": "Immersio",
+    "categories": [
+      "Education"
+    ],
+    "platform": "web",
+    "description": "Immersio is a web-based Japanese language learning platform that transforms authentic\nYouTube videos into an interactive learning environment. The platform integrates AI-powered contextual vocabulary explanations, personalized video recommendations, spaced repetition vocabulary review, and pronunciation practice through shadowing with automated feedback. By combining these features into a single system, Immersio aims to provide a seamless and immersive learning experience that helps learners improve their vocabulary, listening comprehension, and speaking skills while studying with real-world Japanese content.",
+    "keyFeatures": null,
+    "tech": [
+      "React JS",
+      "FastAPI",
+      "PostgreSQL",
+      "OpenAI Whisper",
+      "Librosa",
+      "Gemini",
+      "Google Translate API",
+      "YouTube Data API",
+      "Docker",
+      "AWS EC2"
+    ],
+    "techRaw": "React JS, FastAPI, PostgreSQL, OpenAI Whisper, Librosa, Gemini, Google Translate API, YouTube Data API, Docker, AWS EC2",
+    "deployment": null,
+    "advisor": {
+      "name": "Assistant Prof. Dr. Pree Thiengburanathum"
+    },
+    "members": [
+      {
+        "name": "Phone Myat Ko Ko",
+        "nick": "Phone",
+        "photo": "/projects/immersio/member1.webp"
+      },
+      {
+        "name": "Wai Yan Moe Lwin",
+        "nick": "Way",
+        "photo": "/projects/immersio/member2.webp"
+      }
+    ],
+    "booth": null,
+    "media": {
+      "logo": "/projects/immersio/logo.webp",
+      "poster": "/projects/immersio/poster.webp",
+      "video": "https://ubkfbcuqlhmzrkskwlfy.supabase.co/storage/v1/object/public/video-assets/showpro-assets-videos-v2/immersio.mp4",
+      "shots": {
+        "desktop": [
+          "/projects/immersio/shot-01.webp",
+          "/projects/immersio/shot-02.webp",
+          "/projects/immersio/shot-03.webp",
+          "/projects/immersio/shot-04.webp",
+          "/projects/immersio/shot-05.webp",
+          "/projects/immersio/shot-06.webp",
+          "/projects/immersio/shot-07.webp",
+          "/projects/immersio/shot-08.webp"
         ],
         "mobile": []
       }
